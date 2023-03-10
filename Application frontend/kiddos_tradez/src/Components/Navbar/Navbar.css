@@ -1,0 +1,52 @@
+
+
+@import url('https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300');
+
+.navbar {
+    height: 120px;
+   font-family:'Open Sans Condensed', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  width: 75vh;
+  margin: 0;
+  padding: 0; 
+  /*background-color: #6ECCAF;*/
+  }
+  
+  .nav-items {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0; 
+  list-style: none;
+ /* background-color: #8ccc6e;*/
+  }
+ 
+  
+  .nav-item {
+ 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 12vh;
+    margin: 0 10px; 
+    /*background-color: aqua;*/
+  }
+  .nav-item a{
+    color:#344D67;
+  }
+  
+  
+  .nav-item a:hover {
+   /* color:#6ECCAF;*/
+    text-decoration-line:none;
+    font-family: 'Open Sans Condensed', sans-serif;
+  }
+  @media (max-width: 75vh) {
+    .navbar {
+    display: none;
+    }
+    }
+  

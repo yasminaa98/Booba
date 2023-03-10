@@ -1,0 +1,23 @@
+.boxx{
+    background-image: url('../../Asserts/Images/signin.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;    
+   }
+   .main{
+    background-color:#f3ecb059;
+    box-shadow:0 8px 32px rgba(31,28,135,0.37) ;
+    backdrop-filter: blur(8.5px);
+    border-radius:10px;
+    text-transform: uppercase;
+    letter-spacing:0ch.4rem;
+    height:60vh ;
+    margin-top: 10vh;
+    display: flex;
+    flex-direction:row;
+ 
+    }
+    
