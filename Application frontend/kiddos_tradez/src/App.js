@@ -13,7 +13,7 @@ function App() {
   return (
     <div style={{ backgroundColor: "white" }}>
       <BrowserRouter>
-        <NavBareElement />
+        {/*<NavBareElement />*/}
         <Routes>
           <Route exact path="/" element={<Userinterface />} />
           <Route path="/aboutus" element={<Aboutus />} />
