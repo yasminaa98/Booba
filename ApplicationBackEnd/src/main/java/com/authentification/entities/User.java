@@ -1,6 +1,7 @@
 package com.authentification.entities;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(	name = "users",
@@ -41,6 +42,12 @@ public class User {
 
 	@Column (name="description")
 	private String description;
+
+	@OneToMany(mappedBy = "user")
+	private List<Annonce> annonce ;
+
+	@OneToMany(mappedBy = "user")
+	private List<Favorite> favorites;
 
 
 	public Long getId_user() {

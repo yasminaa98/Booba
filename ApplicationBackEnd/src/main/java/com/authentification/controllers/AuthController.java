@@ -2,6 +2,7 @@ package com.authentification.controllers;
 
 import javax.validation.Valid;
 
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -75,7 +76,8 @@ public class AuthController {
 		}
 
 		// Create new user's account
-		User user = new User( signUpRequest.getUsername(),
+		User user = new User(
+				signUpRequest.getUsername(),
 				signUpRequest.getEmail(),
 				signUpRequest.getFirstname(),
 				signUpRequest.getLastname(),
@@ -83,11 +85,13 @@ public class AuthController {
 				signUpRequest.getAvgResponseTime(),
 				signUpRequest.getPhone(),
 				signUpRequest.getDescription(),
-							 encoder.encode(signUpRequest.getPassword()));
+				encoder.encode(signUpRequest.getPassword()));
 		
 
 		userRepository.save(user);
 
 		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
 	}
+
+
 }

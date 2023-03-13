@@ -1,6 +1,7 @@
 package com.authentification.entities;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name="Annonce")
@@ -13,8 +14,8 @@ public class Annonce {
         @Column(name="name")
         private String name ;
 
-        @Column(name="category")
-        private String category ;
+        @Column(name="Category")
+        private String Category ;
 
         @Column(name="state")
         private String state ;
@@ -30,13 +31,23 @@ public class Annonce {
 
         private boolean estArchive ;
 
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name="id_user")
+        private User user ;
+
+        @ManyToOne
+        @JoinColumn(name = "category_id")
+        private Category category;
+
+        @OneToMany(mappedBy = "annonce")
+        private List<Favorite> favorites;
 
 
         public Long getId_annonce() {return id_annonce;}
 
         public String getName() {return name;}
 
-        public String getCategory() {return category;}
+        public String getCategory() {return Category;}
 
         public String getState() {return state;}
 
@@ -50,7 +61,7 @@ public class Annonce {
 
         public void setName(String name) {this.name = name;}
 
-        public void setCategory(String category) {this.category = category;}
+        public void setCategory(String category) {this.Category = category;}
 
         public void setState(String state) {this.state = state;}
 
@@ -66,7 +77,7 @@ public class Annonce {
                        String ageChild, String ageToy, String description, boolean estArchive) {
                 this.id_annonce = id_annonce;
                 this.name = name;
-                this.category = category;
+                this.Category = category;
                 this.state = state;
                 this.ageChild = ageChild;
                 this.ageToy = ageToy;
