@@ -1,0 +1,10 @@
+.BoxToys{
+display:flex;
+flex-direction: column;
+}
+.price{font-size: 25px;
+  color:#000000;
+  font-size:14px ;
+  display:flex;
+  vertical-align:top;
+text-align: center;}

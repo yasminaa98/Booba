@@ -1,0 +1,21 @@
+
+.footer-distributed{
+	background: #67009f;
+	box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.12);
+	box-sizing: border-box;
+	width: 100%;
+	font: bold 16px sans-serif;
+	padding: 25px 50px;
+    display: flex;
+    align-items: row;
+    justify-content: space-between;
+}
+.footer-right{
+    color:purple;
+    display: flex;
+    flex-direction:column;
+    left:100px;
+    }
+.footer-center{ display: flex;
+justify-content: row;
+}

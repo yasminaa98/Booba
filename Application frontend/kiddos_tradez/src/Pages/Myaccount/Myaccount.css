@@ -1,0 +1,90 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+.box1{
+ background-image: url('../../Asserts/Images/signin.png');
+ background-size: cover;
+ background-repeat: no-repeat;
+ display:flex;
+ justify-content: center;
+ align-items: center;
+ height: 100vh;
+ width: 193vh;
+ margin-top:0;
+}
+
+.mainContainer{
+display: flex;
+flex-direction:row;
+margin-top: 5%;
+height: 60%;
+width: 80%;
+max-width:1000px;
+overflow: 'auto';
+background-color:#f3ecb059;
+box-shadow:0 8px 32px rgba(31,28,135,0.37) ;
+backdrop-filter: blur(8.5px);
+border-radius:10px;
+text-transform: uppercase;
+letter-spacing:0ch.4rem;
+}
+
+.login{
+   
+    display: flex;
+    height: 50px;
+    width:190px;
+    align-items: center;   
+}
+#login-heading {
+    color: #fefdfe;
+    text-shadow: 0px 0px 5px #b393d3, 0px 0px 10px #b393d3, 0px 0px 10px #b393d3,
+      0px 0px 20px #b393d3;
+      font-family: Ink Free;
+      font-size: 20px;
+      margin:0px;
+  }
+
+.inputcontainer{
+
+    display:flex;
+    flex-direction:column;
+    justify-content: space-around;
+    height: 100%;
+    width: 50%;
+}
+.logincontainer{
+align-items:start;
+display:flex;
+flex-direction:column;
+height: 80%;
+margin: 20px;
+
+}
+#welcome-heading{
+display:flex;
+flex-direction:column;
+font-size: 35px;
+color: #fefdfe;
+text-shadow: 0px 0px 5px #b393d3, 0px 0px 10px #b393d3, 0px 0px 10px #b393d3,
+0px 0px 20px #b393d3;
+font-family: Ink Free;
+position:fixed;
+left:155px;
+Top:320px;
+bottom:0px;
+
+}
+.logo{
+  
+height: 60%;
+width: 60%;
+display: flex;
+align-items: center;
+margin: 100px;
+background-image: url('../../Asserts/Logos/kiddostardez.png');
+background-size: 300px;
+background-repeat: no-repeat;
+}

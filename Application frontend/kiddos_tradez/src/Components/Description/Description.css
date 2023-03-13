@@ -1,0 +1,13 @@
+h2 { color:#000000; font-family: 'Lucida Sans Unicode',sans-serif; font-size: 30px; font-weight: 800; line-height: 50px; margin: 0 0 10px; text-align: center; text-transform: uppercase; }
+
+
+h3 { color: #030303; font-family: 'Lucida Sans Unicode',sans-serif; font-size: 20px; font-weight: 800; line-height: 36px; margin: 0 0 10px; text-align: center; }
+
+
+p { line-height: 1.2; color: #080808; font-family: 'Raleway',sans-serif; font-size: 18px; font-weight: 500; line-height: 32px; margin: 0 0 24px; text-align: center; }
+
+
+a { color: #030303; text-decoration: underline; }
+.bold{font-size: 20px}
+
+a:hover { color: #1c1c1c; text-decoration: underline; }

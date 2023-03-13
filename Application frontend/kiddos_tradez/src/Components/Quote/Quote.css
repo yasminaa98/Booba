@@ -1,0 +1,7 @@
+.bg{ background-image: url('../../Asserts/Images/abus.png');
+    background-size:cover;
+    background-repeat:repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;    }
+   

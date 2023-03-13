@@ -1,0 +1,21 @@
+
+
+// redux => store contient tous les data de l'application 
+// Context ==> useContext() 
+// component A , Componenet B, Component C 
+// pass data from A to C 
+// A => props => b props => c consult props 
+// Context(A,B,C)
+
+<Provider hanldeChange , checked>
+
+<ComponentA>
+
+</ComponentA>
+<ComponentB>
+
+</ComponentB>
+<ComponentC handleChange>
+
+</ComponentC>
+</Provider>
