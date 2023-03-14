@@ -28,7 +28,7 @@ public class AccountController {
     }
 
 
-    // Delete account :
+    // Delete account:
 
     @DeleteMapping("/{user_id}/delete-account")
     public ResponseEntity<?> deleteAccount(@PathVariable("user_id") Long user_id) {
