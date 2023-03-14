@@ -1,10 +1,16 @@
 package com.authentification.service;
 
 import com.authentification.entities.Annonce;
+import com.authentification.entities.User;
+import com.authentification.payload.MessageResponse;
 import com.authentification.repositories.AnnonceRepository;
+import com.authentification.repositories.UserRepository;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 import java.util.Optional;
 
@@ -14,37 +20,47 @@ public class AnnonceService {
 
     @Autowired
     private AnnonceRepository annonceRepository ;
+    @Autowired
+    private UserRepository userRepository;
 
     // Add new announce :
 
-    public Annonce addAnnonce ( String name, String category, String state,
-                               String ageChild, String ageToy, String description) {
-        Annonce annonce = new Annonce() ;
+    public ResponseEntity<MessageResponse> addAnnonce (Annonce annonce, HttpSession session) {
+
         annonce.getName();
-        annonce.getCategory();
         annonce.getState();
         annonce.getAgeChild();
         annonce.getAgeToy();
         annonce.getDescription();
-        return annonceRepository.save(annonce) ;
+        Long id = (Long) session.getAttribute("id");
+        Optional<User> user=userRepository.findById(id);
+        if (user.isPresent()){
+            annonce.setUser(user.get());
+            annonceRepository.save(annonce);
+            return ResponseEntity.ok(new MessageResponse("Added successfully!"));
+
+        }
+        return (ResponseEntity<MessageResponse>) ResponseEntity.badRequest();
     }
 
     // Modify Annonce :
 
-    public Annonce modifyAnnonce(Long id_annonce , String name , String category , String state ,
-                                 String ageChild , String ageToy , String description) {
-        Annonce annonce = annonceRepository.findById(id_annonce).orElse(null) ;
-        if ( annonce == null) {
-            return null ;
+    public ResponseEntity<MessageResponse> modifyAnnonce(Long id_annonce , Annonce annonce, User user) {
+          Annonce annonceExistent = annonceRepository.findById(id_annonce).orElse(null) ;
+        if ( annonceExistent == null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Not found")) ;
         }
-               annonce.setName(name);
-               annonce.setCategory(category);
-               annonce.setState(state);
-               annonce.setAgeChild(ageChild);
-               annonce.setAgeToy(ageToy);
-               annonce.setDescription(description);
-
-        return annonceRepository.save(annonce) ;
+               annonceExistent.setName(annonce.getName());
+               annonceExistent.setState(annonce.getState());
+               annonceExistent.setAgeChild(annonce.getAgeChild());
+               annonceExistent.setAgeToy(annonce.getAgeToy());
+               annonceExistent.setDescription(annonce.getDescription());
+        try {
+            annonceRepository.save(annonceExistent);
+            return ResponseEntity.ok(new MessageResponse("Modified successfully!"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Not modified"));
+        }
     }
 
     //  Archive Annonce :

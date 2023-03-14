@@ -22,9 +22,9 @@ public class AccountController {
         ResponseEntity<MessageResponse> accountModified = accountService.updateAccount(user_id, user) ;
 
         if (accountModified == null) {
-            return ResponseEntity.ok(new MessageResponse("Account not modified !"));
+            return ResponseEntity.ok(new MessageResponse("Not modified !"));
         }
-        return ResponseEntity.ok(new MessageResponse("Account modified successfully !"));
+        return ResponseEntity.ok(new MessageResponse("Modified successfully !"));
     }
 
 
@@ -33,7 +33,7 @@ public class AccountController {
     @DeleteMapping("/{user_id}/delete-account")
     public ResponseEntity<?> deleteAccount(@PathVariable("user_id") Long user_id) {
         accountService.deleteAccount(user_id);
-        return ResponseEntity.ok(new MessageResponse("Account deleted successfully!"));
+        return ResponseEntity.ok(new MessageResponse("Deleted successfully!"));
     }
 
 

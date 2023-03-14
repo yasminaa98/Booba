@@ -14,8 +14,7 @@ public class Annonce {
         @Column(name="name")
         private String name ;
 
-        @Column(name="Category")
-        private String Category ;
+
 
         @Column(name="state")
         private String state ;
@@ -47,8 +46,6 @@ public class Annonce {
 
         public String getName() {return name;}
 
-        public String getCategory() {return Category;}
-
         public String getState() {return state;}
 
         public String getAgeChild() {return ageChild;}
@@ -60,8 +57,6 @@ public class Annonce {
         public boolean isEstArchive() {return estArchive;}
 
         public void setName(String name) {this.name = name;}
-
-        public void setCategory(String category) {this.Category = category;}
 
         public void setState(String state) {this.state = state;}
 
@@ -77,7 +72,6 @@ public class Annonce {
                        String ageChild, String ageToy, String description, boolean estArchive) {
                 this.id_annonce = id_annonce;
                 this.name = name;
-                this.Category = category;
                 this.state = state;
                 this.ageChild = ageChild;
                 this.ageToy = ageToy;
@@ -92,12 +86,19 @@ public class Annonce {
                 return "Annonce{" +
                         "id_annonce=" + id_annonce +
                         ", name='" + name + '\'' +
-                        ", category='" + category + '\'' +
                         ", state='" + state + '\'' +
                         ", ageChild='" + ageChild + '\'' +
                         ", ageToy='" + ageToy + '\'' +
                         ", description='" + description + '\'' +
                         ", estArchive=" + estArchive +
                         '}';
+        }
+
+        public User getUser() {
+                return user;
+        }
+
+        public void setUser(User user) {
+                this.user = user;
         }
 }

@@ -17,11 +17,11 @@ public class AccountService {
     private UserRepository userRepository;
 
     // Update account:
-    public ResponseEntity<MessageResponse> updateAccount(Long userId, User user) {
-        User existentUser = userRepository.findById(userId).orElse(null);
+    public ResponseEntity<MessageResponse> updateAccount(Long id_user, User user) {
+        User existentUser = userRepository.findById(id_user).orElse(null);
 
         if (existentUser == null) {
-            return ResponseEntity.badRequest().body(new MessageResponse("User not found"));
+            return ResponseEntity.badRequest().body(new MessageResponse("Not found"));
         }
 
         existentUser.setFirstname(user.getFirstname());
@@ -35,9 +35,9 @@ public class AccountService {
 
         try {
             userRepository.save(existentUser);
-            return ResponseEntity.ok(new MessageResponse("User modified successfully!"));
+            return ResponseEntity.ok(new MessageResponse("modified successfully!"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Failed to update user"));
+            return ResponseEntity.badRequest().body(new MessageResponse("Not modified"));
         }
     }
 
@@ -46,14 +46,14 @@ public class AccountService {
         User existentUser = userRepository.findById(userId).orElse(null);
 
         if (existentUser == null) {
-            return ResponseEntity.badRequest().body(new MessageResponse("User not found"));
+            return ResponseEntity.badRequest().body(new MessageResponse("Not found"));
         }
 
         try {
             userRepository.deleteById(userId);
-            return ResponseEntity.ok(new MessageResponse("User deleted successfully!"));
+            return ResponseEntity.ok(new MessageResponse("Deleted successfully!"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Failed to delete user"));
+            return ResponseEntity.badRequest().body(new MessageResponse("Not delete"));
         }
     }
 }
