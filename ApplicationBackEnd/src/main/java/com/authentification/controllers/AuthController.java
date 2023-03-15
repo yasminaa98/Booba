@@ -3,6 +3,9 @@ package com.authentification.controllers;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+import com.authentification.service.UserDetailsServiceImpl;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,22 +32,21 @@ import com.authentification.repositories.UserRepository;
 import com.authentification.jwt.JwtUtils;
 import com.authentification.service.UserDetailsImpl;
 
+import java.security.Key;
+import java.util.Date;
+
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 	@Autowired
 	AuthenticationManager authenticationManager;
-
 	@Autowired
 	UserRepository userRepository;
-
 	@Autowired
 	PasswordEncoder encoder;
-
 	@Autowired
 	JwtUtils jwtUtils;
-
 	@PostMapping("/signin")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest, HttpSession session) {
 
@@ -53,17 +55,16 @@ public class AuthController {
 
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		String jwt = jwtUtils.generateJwtToken(authentication);
-		
+
 		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-		session.setAttribute("id",userDetails.getId());
+		session.setAttribute("id", userDetails.getId());
 
-		return ResponseEntity.ok(new JwtResponse(jwt, 
-												 userDetails.getId(), 
-												 userDetails.getUsername(), 
-												 userDetails.getEmail(), 
-												 null));
+		return ResponseEntity.ok(new JwtResponse(jwt,
+				userDetails.getId(),
+				userDetails.getUsername(),
+				userDetails.getEmail(),
+				null));
 	}
-
 	@PostMapping("/signup")
 	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest, HttpSession session) {
 		if (userRepository.existsByUsername(signUpRequest.getUsername())) {
@@ -77,7 +78,6 @@ public class AuthController {
 					.badRequest()
 					.body(new MessageResponse("Error: Email is already in use!"));
 		}
-
 		// Create new user's account
 		User user = new User(
 				signUpRequest.getUsername(),
@@ -89,12 +89,15 @@ public class AuthController {
 				signUpRequest.getPhone(),
 				signUpRequest.getDescription(),
 				encoder.encode(signUpRequest.getPassword()));
-		
-
 		userRepository.save(user);
-		session.setAttribute("id",user.getId_user());
+		session.setAttribute("id", user.getId_user());
+		// Generate JWT token
+		Authentication authentication = authenticationManager.authenticate(
+				new UsernamePasswordAuthenticationToken(signUpRequest.getUsername(), signUpRequest.getPassword()));
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+		String jwt = jwtUtils.generateJwtToken(authentication);
+		// Print token to console
+		System.out.println("JWT token: " + jwt);
 		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
 	}
-
-
 }
