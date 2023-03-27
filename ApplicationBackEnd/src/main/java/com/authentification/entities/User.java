@@ -54,9 +54,7 @@ public class User {
 		return id_user;
 	}
 
-	public void setId_user(Long id_user) {
-		this.id_user = id_user;
-	}
+	// public void setId_user(Long id_user) {this.id_user = id_user;}
 
 	public String getUsername() {
 		return username;

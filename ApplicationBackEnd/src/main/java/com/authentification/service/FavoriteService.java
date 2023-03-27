@@ -13,19 +13,23 @@ import java.util.Optional;
 @Service
 public class FavoriteService {
     private FavoriteRepository favoriteRepository;
-    private AnnonceRepository annonceRepository ;
+    private AnnonceRepository annonceRepository;
 
-    public FavoriteService(FavoriteRepository favoriteRepository) {
+    public FavoriteService(FavoriteRepository favoriteRepository, AnnonceRepository annonceRepository) {
         this.favoriteRepository = favoriteRepository;
+        this.annonceRepository = annonceRepository;
     }
 
     public List<Favorite> getAllFavorites(User user) {
         return favoriteRepository.findByUser(user);
     }
 
+
     public Annonce getAnnonceById(Long id_annonce) {
         return annonceRepository.findById(id_annonce).orElse(null);
     }
+
+
     public void addToFavorites(User user, Annonce annonce) {
         Optional<Favorite> existingFavorite = favoriteRepository.findByUserAndAnnonce(user, annonce);
         if (existingFavorite.isPresent()) {
@@ -44,6 +48,5 @@ public class FavoriteService {
         }
         favoriteRepository.delete(existingFavorite.get());
     }
+
 }
-
-
