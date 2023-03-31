@@ -3,6 +3,7 @@ package com.authentification.controllers;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+import com.authentification.service.AuthService;
 import com.authentification.service.UserDetailsServiceImpl;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -64,6 +65,7 @@ public class AuthController {
 				userDetails.getUsername(),
 				userDetails.getEmail(),
 				null));
+
 	}
 	@PostMapping("/signup")
 	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest, HttpSession session) {
@@ -98,6 +100,7 @@ public class AuthController {
 		String jwt = jwtUtils.generateJwtToken(authentication);
 		// Print token to console
 		System.out.println("JWT token: " + jwt);
-		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+		return ResponseEntity.ok(new MessageResponse("User registered successfully!") + jwt);
+
 	}
 }

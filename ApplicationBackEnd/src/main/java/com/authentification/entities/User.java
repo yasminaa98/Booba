@@ -1,8 +1,15 @@
 package com.authentification.entities;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.util.List;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(	name = "users",
 		uniqueConstraints = { 
@@ -49,89 +56,10 @@ public class User {
 	@OneToMany(mappedBy = "user")
 	private List<Favorite> favorites;
 
-
-	public Long getId_user() {
-		return id_user;
-	}
-
-	// public void setId_user(Long id_user) {this.id_user = id_user;}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
+	public User( String username, String password, String firstname, String lastname,
+				 String email, String homeAddress, int phone, String avgResponseTime, String description) {
 		this.username = username;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
 		this.password = password;
-	}
-
-	public String getFirstname() {
-		return firstname;
-	}
-
-	public void setFirstname(String firstname) {
-		this.firstname = firstname;
-	}
-
-	public String getLastname() {
-		return lastname;
-	}
-
-	public void setLastname(String lastname) {
-		this.lastname = lastname;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getHomeAddress() {
-		return homeAddress;
-	}
-
-	public void setHomeAddress(String homeAddress) {
-		this.homeAddress = homeAddress;
-	}
-
-	public int getPhone() {
-		return phone;
-	}
-
-	public void setPhone(int phone) {
-		this.phone = phone;
-	}
-
-	public String getAvgResponseTime() {
-		return avgResponseTime;
-	}
-
-	public void setAvgResponseTime(String avgResponseTime) {
-		this.avgResponseTime = avgResponseTime;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public User(String username,String email, String firstname, String lastname, String homeAddress, String avgResponseTime, int phone, String description, String encode) {
-
-		this.username = username;
-		this.password = encode;
 		this.firstname = firstname;
 		this.lastname = lastname;
 		this.email = email;
@@ -140,18 +68,4 @@ public class User {
 		this.avgResponseTime = avgResponseTime;
 		this.description = description;
 	}
-
-	public User() {
-
-	}
-
-	@Override
-	public String toString() {
-		return "User [id_user=" + id_user + ", username=" + username + ", password=" + password + ", firstname="
-				+ firstname + ", lastname=" + lastname + ", email=" + email + ", homeAddress=" + homeAddress
-				+ ", phone=" + phone + ", avgResponseTime=" + avgResponseTime + ", description=" + description + "]";
-	}
-
-
-
 }
