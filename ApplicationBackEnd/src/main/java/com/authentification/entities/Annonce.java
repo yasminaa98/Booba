@@ -22,6 +22,12 @@ public class Annonce {
         @Column(name = "name")
         private String name;
 
+        @Column(name = "picture")
+        private String picture;
+
+        @Column(name="price")
+        private String price ;
+
         @Column(name = "state")
         private String state;
 
@@ -33,7 +39,6 @@ public class Annonce {
 
         @Column(name = "category")
         private String category;
-
 
         @Column(name = "description")
         private String description;

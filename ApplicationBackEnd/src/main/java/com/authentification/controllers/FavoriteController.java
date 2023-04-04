@@ -22,18 +22,34 @@ public class FavoriteController {
     @Autowired
     private AnnonceService annonceService;
 
-
+    /***
+     * Api for getting all the favorites of a user
+     * @param id_user
+     * @return
+     */
     @GetMapping("/{id_user}/getAllFavorite")
     public List<Favorite> getAllFavorites(@PathVariable Long id_user) {
         return favoriteService.getAllFavorites(id_user);
     }
 
+    /***
+     * Api for adding an annonce to the user's favorites
+     * @param id_annonce
+     * @param session
+     * @throws NotFoundException
+     */
     @PostMapping("/{id_annonce}/add-to-favorites")
     public void addToFavorites(@PathVariable Long id_annonce, HttpSession session)throws NotFoundException {
         Annonce annonce = annonceService.getAnnonceById(id_annonce);
         favoriteService.addToFavorites(annonce, session);
     }
 
+    /***
+     * Api for removing an annonce from the user's favorites
+     * @param user
+     * @param id_annonce
+     * @throws NotFoundException
+     */
     @DeleteMapping("/{id_annonce}/remove-from-favorites")
     public void removeFromFavorites(@AuthenticationPrincipal User user, @PathVariable Long id_annonce) throws NotFoundException {
         Annonce annonce = annonceService.getAnnonceById(id_annonce);

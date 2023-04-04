@@ -18,13 +18,22 @@ public class FavoriteService {
    @Autowired
     private FavoriteRepository favoriteRepository;
    @Autowired
-   private AnnonceRepository annonceRepository;
-   @Autowired
    private UserRepository userRepository ;
 
-        public List<Favorite> getAllFavorites(Long id_user) {
+    /***
+     * Api for getting all the favorite of a user
+     * @param id_user
+     * @return
+     */
+    public List<Favorite> getAllFavorites(Long id_user) {
         return favoriteRepository.findByUserId(id_user);
     }
+
+    /***
+     * Api for adding an annonce to the user's favorites
+     * @param annonce
+     * @param session
+     */
 
     public void addToFavorites(Annonce annonce, HttpSession session) {
        Long id = (Long) session.getAttribute("id");
@@ -44,6 +53,11 @@ public class FavoriteService {
         }
     }
 
+    /***
+     * Api for removing an annonce from the user's favorite
+     * @param user
+     * @param annonce
+     */
     public void removeFromFavorites(User user, Annonce annonce) {
         Optional<Favorite> existingFavorite = favoriteRepository.findByUserAndAnnonce(user, annonce);
         if (existingFavorite.isPresent()) {

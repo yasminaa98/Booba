@@ -2,14 +2,11 @@ package com.authentification.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
 import java.util.List;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 @Entity
 @Table(	name = "users",
 		uniqueConstraints = { 
@@ -22,7 +19,6 @@ public class User {
 	private Long id_user;
 
 	@Column(name="username")
-
 	private String username;
 
 	@Column(name="password")
@@ -35,7 +31,6 @@ public class User {
 	private String lastname ;
 
 	@Column (name="email")
-
 	private String email;
 
 	@Column (name="homeAddress")
@@ -50,16 +45,19 @@ public class User {
 	@Column (name="description")
 	private String description;
 
+
 	@OneToMany(mappedBy = "user")
 	private List<Annonce> annonce ;
 
 	@OneToMany(mappedBy = "user")
 	private List<Favorite> favorites;
 
-	public User( String username, String password, String firstname, String lastname,
-				 String email, String homeAddress, int phone, String avgResponseTime, String description) {
+	public User(String username,String email, String firstname,
+				String lastname, String homeAddress, String avgResponseTime, int phone,
+				String description, String encode) {
+
 		this.username = username;
-		this.password = password;
+		this.password = encode;
 		this.firstname = firstname;
 		this.lastname = lastname;
 		this.email = email;
@@ -67,5 +65,26 @@ public class User {
 		this.phone = phone;
 		this.avgResponseTime = avgResponseTime;
 		this.description = description;
+	}
+
+	public User() {}
+
+
+	@Override
+	public String toString() {
+		return "User{" +
+				"id_user=" + id_user +
+				", username='" + username + '\'' +
+				", password='" + password + '\'' +
+				", firstname='" + firstname + '\'' +
+				", lastname='" + lastname + '\'' +
+				", email='" + email + '\'' +
+				", homeAddress='" + homeAddress + '\'' +
+				", phone=" + phone +
+				", avgResponseTime='" + avgResponseTime + '\'' +
+				", description='" + description + '\'' +
+				", annonce=" + annonce +
+				", favorites=" + favorites +
+				'}';
 	}
 }
