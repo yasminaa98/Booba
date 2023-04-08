@@ -54,6 +54,7 @@ public class AnnonceService {
         newAnnonce.setPicture(annonce.getPicture());
         newAnnonce.setPrice(annonce.getPrice());
         newAnnonce.setState(annonce.getState());
+
         newAnnonce.setAgeChild(annonce.getAgeChild());
         newAnnonce.setAgeToy(annonce.getAgeToy());
         newAnnonce.setCategory(annonce.getCategory());
