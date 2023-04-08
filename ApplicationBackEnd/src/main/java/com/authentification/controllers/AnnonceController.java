@@ -4,6 +4,7 @@ import com.authentification.entities.Annonce;
 import com.authentification.entities.User;
 import com.authentification.payload.MessageResponse;
 import com.authentification.service.AnnonceService;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,16 @@ public class AnnonceController {
     @Autowired
     private AnnonceService annonceService ;
 
+    @GetMapping("/getAll")
+    public List<Annonce> getAllAnnonce() {
+        return annonceService.getAllAnnonce();
+    }
+
+    @GetMapping("/{category}")
+    public List<Annonce> getAnnonceByCategory(@PathVariable String category) {
+        return annonceService.getAnnonceByCategory(category);
+    }
+
     /***
      * Api for adding a new annonce
      * @param annonce
@@ -24,7 +35,7 @@ public class AnnonceController {
      * @return
      */
     @PostMapping("/add-annonce")
-    public ResponseEntity<MessageResponse> addAnnonce (@RequestBody Annonce annonce, HttpSession session) {
+    public Annonce addAnnonce (@RequestBody Annonce annonce, HttpSession session) throws NotFoundException {
         return annonceService.addAnnonce(annonce,session);
     }
 
@@ -52,15 +63,7 @@ public class AnnonceController {
         return annonceService.archiveAnnonce(id_annonce) ;
     }
 
-    @GetMapping("/{category}/getAnnonce")
-    public List<Annonce> getAnnonceByCategory(@PathVariable String category) {
-        return annonceService.getAnnonceByCategory(category);
-    }
 
-    @GetMapping("/getAllAnnonces")
-    public List<Annonce> getAllAnnonces() {
-        return annonceService.getAllAnnonces();
-    }
 
 
 }

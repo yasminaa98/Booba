@@ -8,25 +8,26 @@ import com.authentification.payload.MessageResponse;
 import com.authentification.payload.SignupRequest;
 import com.authentification.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
-import java.util.Optional;
+import java.util.Arrays;
+
 
 @Service
  @Transactional
 
 public class UserService {
 
-   /* @Autowired
+    @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
     private JwtUtils jwtUtils;
@@ -35,35 +36,58 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public JwtResponse authenticateUser(LoginRequest loginRequest) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtUtils.generateJwtToken(authentication);
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        return new JwtResponse(jwt,
-                userDetails.getId(),
-                userDetails.getUsername(),
-                userDetails.getEmail(),
-                null);
+
+    /***
+     * Api for signing in
+     * @param loginRequest
+     * @param session
+     * @return
+     */
+    public ResponseEntity<?> authenticateUser(LoginRequest loginRequest, HttpSession session) {
+
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String jwt = jwtUtils.generateJwtToken(authentication);
+
+            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+            session.setAttribute("id", userDetails.getId());
+
+            return ResponseEntity.ok(new JwtResponse(jwt,
+                    userDetails.getId(),
+                    userDetails.getUsername(),
+                    userDetails.getEmail(),
+                    null));
+        } catch (AuthenticationException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new MessageResponse("Invalid username or password"));
+        }
+
     }
 
-
-    public ResponseEntity<?> registerUser(SignupRequest signUpRequest, HttpSession session) {
+    /***
+     * Api for signing up
+     * @param signUpRequest
+     * @param session
+     * @return
+     */
+    public ResponseEntity<?> registerUser(SignupRequest signUpRequest , HttpSession session) {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("Error: Username is already taken!"));
         }
+
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
             return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("Error: Email is already in use!"));
         }
-        User user = new User(
-                signUpRequest.getUsername(),
+
+        User user = new User( signUpRequest.getUsername(),
                 signUpRequest.getEmail(),
-                signUpRequest.getPicture(),
                 signUpRequest.getFirstname(),
                 signUpRequest.getLastname(),
                 signUpRequest.getHomeAddress(),
@@ -71,20 +95,17 @@ public class UserService {
                 signUpRequest.getPhone(),
                 signUpRequest.getDescription(),
                 encoder.encode(signUpRequest.getPassword()));
+
         userRepository.save(user);
         session.setAttribute("id", user.getId_user());
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(signUpRequest.getUsername(), signUpRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
-        String message = "User" + signUpRequest.getUsername() + "registered successfully !  " +
-                "signup token : " + jwt;
-        return ResponseEntity.ok(new MessageResponse(message));
-    }*/
+        String successMessage = "User " + signUpRequest.getUsername() + " registered successfully!";
+        String tokenMessage = "Signup token: " + jwt;
+        return ResponseEntity.ok().body(Arrays.asList(new MessageResponse(successMessage), new MessageResponse(tokenMessage)));
+    }
 
   }
-
-
-
-
 

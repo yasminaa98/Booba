@@ -21,8 +21,8 @@ import io.jsonwebtoken.UnsupportedJwtException;
 		@Value("wajdiSecretKey")
 		private String jwtSecret;
 
-		@Value("86400000")
-		private int jwtExpirationMs;
+		@Value("86400000000")
+		private Long jwtExpirationMs;
 
 		public String generateJwtToken(Authentication authentication) {
 

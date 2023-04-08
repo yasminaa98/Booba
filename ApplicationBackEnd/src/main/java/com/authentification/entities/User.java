@@ -2,11 +2,15 @@ package com.authentification.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(	name = "users",
 		uniqueConstraints = { 
@@ -30,6 +34,7 @@ public class User {
 	@Column (name="lastname")
 	private String lastname ;
 
+
 	@Column (name="email")
 	private String email;
 
@@ -45,9 +50,6 @@ public class User {
 	@Column (name="description")
 	private String description;
 
-
-	@OneToMany(mappedBy = "user")
-	private List<Annonce> annonce ;
 
 	@OneToMany(mappedBy = "user")
 	private List<Favorite> favorites;
@@ -67,24 +69,4 @@ public class User {
 		this.description = description;
 	}
 
-	public User() {}
-
-
-	@Override
-	public String toString() {
-		return "User{" +
-				"id_user=" + id_user +
-				", username='" + username + '\'' +
-				", password='" + password + '\'' +
-				", firstname='" + firstname + '\'' +
-				", lastname='" + lastname + '\'' +
-				", email='" + email + '\'' +
-				", homeAddress='" + homeAddress + '\'' +
-				", phone=" + phone +
-				", avgResponseTime='" + avgResponseTime + '\'' +
-				", description='" + description + '\'' +
-				", annonce=" + annonce +
-				", favorites=" + favorites +
-				'}';
-	}
 }

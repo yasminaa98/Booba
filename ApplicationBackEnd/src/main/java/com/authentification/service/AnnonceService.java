@@ -38,31 +38,16 @@ public class AnnonceService {
         }
     }
 
-    /***
-     * Api for getting the annonces by category
-     * @param category
-     * @return
-     */
+    public List<Annonce> getAllAnnonce() {
+        return annonceRepository.findAll();
+    }
+
     public List<Annonce> getAnnonceByCategory(String category) {
         return annonceRepository.findByCategory(category);
     }
 
-    /***
-     * Api for getting all the annonces
-     * @return
-     */
-    public List<Annonce> getAllAnnonces() {
-        return annonceRepository.findAll();
-    }
 
-    /***
-     * Api for adding a new annonce
-     * @param annonce
-     * @param session
-     * @return
-     */
-
-    public ResponseEntity<MessageResponse> addAnnonce (Annonce annonce, HttpSession session) {
+    public Annonce addAnnonce (Annonce annonce, HttpSession session) throws NotFoundException {
 
         Annonce newAnnonce =new Annonce();
         newAnnonce.setName(annonce.getName());
@@ -80,10 +65,12 @@ public class AnnonceService {
         if (user.isPresent()){
             newAnnonce.setUser(user.get());
             annonceRepository.save(newAnnonce);
-            return ResponseEntity.ok(new MessageResponse("Added successfully!"));
 
-        }
-        return (ResponseEntity<MessageResponse>) ResponseEntity.badRequest();
+            //return ResponseEntity.ok(new MessageResponse("Annonce Added successfully !"));
+            return newAnnonce ;
+
+        } else throw new NotFoundException("Annonce with id not found.");
+        //return (ResponseEntity<MessageResponse>) ResponseEntity.badRequest();
     }
 
     /***
@@ -97,7 +84,7 @@ public class AnnonceService {
     public ResponseEntity<MessageResponse> modifyAnnonce(Long id_annonce , Annonce annonce, User user) {
           Annonce annonceExistent = annonceRepository.findById(id_annonce).orElse(null) ;
         if ( annonceExistent == null) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Not found")) ;
+            return ResponseEntity.badRequest().body(new MessageResponse("Annonce Not found")) ;
         }
                annonceExistent.setName(annonce.getName());
                annonceExistent.setPicture(annonce.getPicture());
