@@ -1,4 +1,4 @@
-package com.authentification.controller;
+package com.authentification.controllers;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
