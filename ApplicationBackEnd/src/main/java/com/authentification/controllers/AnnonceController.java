@@ -35,7 +35,7 @@ public class AnnonceController {
      * @return
      */
     @PostMapping("/add-annonce")
-    public Annonce addAnnonce (@RequestBody Annonce annonce, HttpSession session) throws NotFoundException {
+    public ResponseEntity<MessageResponse> addAnnonce (@RequestBody Annonce annonce, HttpSession session) throws NotFoundException {
         return annonceService.addAnnonce(annonce,session);
     }
 

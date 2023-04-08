@@ -47,7 +47,7 @@ public class AnnonceService {
     }
 
 
-    public Annonce addAnnonce (Annonce annonce, HttpSession session) throws NotFoundException {
+    public ResponseEntity<MessageResponse> addAnnonce (Annonce annonce, HttpSession session) {
 
         Annonce newAnnonce =new Annonce();
         newAnnonce.setName(annonce.getName());
@@ -65,12 +65,10 @@ public class AnnonceService {
         if (user.isPresent()){
             newAnnonce.setUser(user.get());
             annonceRepository.save(newAnnonce);
+            return ResponseEntity.ok(new MessageResponse("Annonce Added successfully!"));
 
-            //return ResponseEntity.ok(new MessageResponse("Annonce Added successfully !"));
-            return newAnnonce ;
-
-        } else throw new NotFoundException("Annonce with id not found.");
-        //return (ResponseEntity<MessageResponse>) ResponseEntity.badRequest();
+        }
+        return (ResponseEntity<MessageResponse>) ResponseEntity.badRequest();
     }
 
     /***
