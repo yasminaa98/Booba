@@ -5,17 +5,16 @@ import javax.validation.Valid;
 import com.authentification.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.authentification.payload.LoginRequest;
 import com.authentification.payload.SignupRequest;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.Map;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
 public class UserController {
@@ -35,14 +34,35 @@ public class UserController {
 
 	/***
 	 * Api for signing up
-	 * @param signUpRequest
-	 * @param session
+	 * @param
+	 * @param
 	 * @return
 	 */
+
 	@PostMapping("/signup")
-	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest, HttpSession session) {
-		return userService.registerUser(signUpRequest, session);
+	public ResponseEntity<?> registerUser(@ModelAttribute SignupRequest signUpRequest, HttpSession session) throws IOException {
+		Map<String, Object> response = userService.registerUser(signUpRequest, session);
+		if (response.containsKey("id")) {
+			return ResponseEntity.ok().body(response);
+		} else {
+			return ResponseEntity.badRequest().body(response);
+		}
 	}
+
+	/*@PostMapping("/signup")
+	public ResponseEntity<?> registerUser(@RequestBody SignupRequest signUpRequest, HttpSession session) throws IOException {
+		Map<String, Object> response = userService.registerUser(signUpRequest, session);
+		return ResponseEntity.status((int) response.get("status")).body(response.get("body"));
+	}*/
+
+	/*@PostMapping("/signup")
+	public ResponseEntity<?> registerUser(@RequestPart("profilePicture") MultipartFile profilePicture,
+										  @Valid @RequestBody SignupRequest signUpRequest,
+										  HttpSession session) throws IOException
+	{return userService.registerUser(signUpRequest, session);}*/
+
+
+
 }
 
 

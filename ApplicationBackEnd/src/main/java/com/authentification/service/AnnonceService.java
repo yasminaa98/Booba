@@ -46,6 +46,19 @@ public class AnnonceService {
         return annonceRepository.findByCategory(category);
     }
 
+    public User getAnnonceOwner(Long id_annonce) throws NotFoundException {
+        Optional<Annonce> annonceOptional = annonceRepository.findById(id_annonce);
+        if (annonceOptional.isPresent()) {
+            Annonce annonce = annonceOptional.get();
+            return annonce.getUser();
+        } else {
+            throw new NotFoundException("Annonce with id " + id_annonce + " not found.");
+        }
+    }
+
+
+
+
 
     public ResponseEntity<MessageResponse> addAnnonce (Annonce annonce, HttpSession session) {
 
@@ -54,7 +67,6 @@ public class AnnonceService {
         newAnnonce.setPicture(annonce.getPicture());
         newAnnonce.setPrice(annonce.getPrice());
         newAnnonce.setState(annonce.getState());
-
         newAnnonce.setAgeChild(annonce.getAgeChild());
         newAnnonce.setAgeToy(annonce.getAgeToy());
         newAnnonce.setCategory(annonce.getCategory());

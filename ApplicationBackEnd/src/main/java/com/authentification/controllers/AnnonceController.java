@@ -4,6 +4,7 @@ import com.authentification.entities.Annonce;
 import com.authentification.entities.User;
 import com.authentification.payload.MessageResponse;
 import com.authentification.service.AnnonceService;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
+
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/annonces")
 public class AnnonceController {
@@ -27,6 +30,14 @@ public class AnnonceController {
     public List<Annonce> getAnnonceByCategory(@PathVariable String category) {
         return annonceService.getAnnonceByCategory(category);
     }
+
+    @GetMapping("/{id_annonce}/user")
+    public User getUserByAnnonceId(@PathVariable("id_annonce") Long id_annonce) throws NotFoundException {
+
+            return annonceService.getAnnonceOwner(id_annonce);
+
+    }
+
 
     /***
      * Api for adding a new annonce

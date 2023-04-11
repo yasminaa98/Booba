@@ -1,17 +1,20 @@
 package com.authentification.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Table(	name = "users",
 		uniqueConstraints = { 
 			@UniqueConstraint(columnNames = "username"),
@@ -34,6 +37,8 @@ public class User {
 	@Column (name="lastname")
 	private String lastname ;
 
+	@Column(name = "profile_picture_path")
+	private String profilePicturePath;
 
 	@Column (name="email")
 	private String email;
@@ -50,7 +55,7 @@ public class User {
 	@Column (name="description")
 	private String description;
 
-
+	@JsonIgnore
 	@OneToMany(mappedBy = "user")
 	private List<Favorite> favorites;
 
@@ -69,4 +74,6 @@ public class User {
 		this.description = description;
 	}
 
+	public void setProfilePicturePath(String toString) {
+	}
 }

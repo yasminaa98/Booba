@@ -17,13 +17,23 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
+
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @Service
- @Transactional
+@Transactional
 
 public class UserService {
 
@@ -73,7 +83,55 @@ public class UserService {
      * @param session
      * @return
      */
-    public ResponseEntity<?> registerUser(SignupRequest signUpRequest , HttpSession session) {
+
+    public Map<String, Object> registerUser(SignupRequest signUpRequest , HttpSession session) throws IOException {
+        Map<String, Object> response = new HashMap<>();
+        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+            response.put("message", "Error: Username is already taken!");
+            return response;
+        }
+
+        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+            response.put("message", "Error: Email is already in use!");
+            return response;
+        }
+
+        User user = new User( signUpRequest.getUsername(),
+                signUpRequest.getEmail(),
+                signUpRequest.getFirstname(),
+                signUpRequest.getLastname(),
+                signUpRequest.getHomeAddress(),
+                signUpRequest.getAvgResponseTime(),
+                signUpRequest.getPhone(),
+                signUpRequest.getDescription(),
+                encoder.encode(signUpRequest.getPassword()));
+
+        if (signUpRequest.getProfilePicture() != null) {
+            String fileName = signUpRequest.getProfilePicture().getOriginalFilename();
+            Path path = Paths.get("C:/ProfilePictures/" + fileName) ;
+            Files.write(path, signUpRequest.getProfilePicture().getBytes());
+            user.setProfilePicturePath(path.toString());
+        }
+
+        userRepository.save(user);
+        session.setAttribute("id", user.getId_user());
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(signUpRequest.getUsername(), signUpRequest.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = jwtUtils.generateJwtToken(authentication);
+        String successMessage = "User " + signUpRequest.getUsername() + " registered successfully!";
+        String tokenMessage = "Signup token: " + jwt;
+        response.put("message", Arrays.asList(new MessageResponse(successMessage), new MessageResponse(tokenMessage)));
+        response.put("id", user.getId_user());
+        if (response.containsKey("id")) {
+            return ResponseEntity.ok().body(response).getBody();
+        } else {
+            return ResponseEntity.badRequest().body(response).getBody();
+        }
+    }
+
+
+     /*public ResponseEntity<?> registerUser(SignupRequest signUpRequest , HttpSession session) throws IOException {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             return ResponseEntity
                     .badRequest()
@@ -95,6 +153,12 @@ public class UserService {
                 signUpRequest.getPhone(),
                 signUpRequest.getDescription(),
                 encoder.encode(signUpRequest.getPassword()));
+        if (signUpRequest.getProfilePicture() != null) {
+            String fileName = signUpRequest.getProfilePicture().getOriginalFilename();
+            Path path = Paths.get("C:/ProfilePictures/" + fileName) ;
+            Files.write(path, signUpRequest.getProfilePicture().getBytes());
+            user.setProfilePicturePath(path.toString());
+        }
 
         userRepository.save(user);
         session.setAttribute("id", user.getId_user());
@@ -105,7 +169,48 @@ public class UserService {
         String successMessage = "User " + signUpRequest.getUsername() + " registered successfully!";
         String tokenMessage = "Signup token: " + jwt;
         return ResponseEntity.ok().body(Arrays.asList(new MessageResponse(successMessage), new MessageResponse(tokenMessage)));
-    }
+    }*/
 
-  }
+    /* public ResponseEntity<?> registerUser(SignupRequest signUpRequest , HttpSession session) throws IOException {
+        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Error: Username is already taken!"));
+        }
+
+        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Error: Email is already in use!"));
+        }
+
+        User user = new User( signUpRequest.getUsername(),
+                signUpRequest.getEmail(),
+                signUpRequest.getFirstname(),
+                signUpRequest.getLastname(),
+                signUpRequest.getHomeAddress(),
+                signUpRequest.getAvgResponseTime(),
+                signUpRequest.getPhone(),
+                signUpRequest.getDescription(),
+                encoder.encode(signUpRequest.getPassword()));
+          if (signUpRequest.getProfilePicture() != null) {
+            String fileName = signUpRequest.getProfilePicture().getOriginalFilename();
+            Path path = Paths.get("C:/ProfilePictures/" + fileName) ;
+            Files.write(path, signUpRequest.getProfilePicture().getBytes());
+            user.setProfilePicturePath(path.toString());
+          }
+
+        userRepository.save(user);
+        session.setAttribute("id", user.getId_user());
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(signUpRequest.getUsername(), signUpRequest.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = jwtUtils.generateJwtToken(authentication);
+        String successMessage = "User " + signUpRequest.getUsername() + " registered successfully! ID: " + user.getId_user();
+        String tokenMessage = "Signup token: " + jwt;
+        return ResponseEntity.ok().body(Arrays.asList(new MessageResponse(successMessage), new MessageResponse(tokenMessage)));
+    }*/
+
+
+}
 
