@@ -9,9 +9,9 @@ import java.util.List;
 
 
 @Data
+@Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
 @Table(name="Annonce")
 public class Annonce {
 
@@ -30,6 +30,9 @@ public class Annonce {
 
         @Column(name = "state")
         private String state;
+
+        @Enumerated(EnumType.STRING)
+        private AnnonceType type;
 
         @Column(name = "ageChild")
         private String ageChild;

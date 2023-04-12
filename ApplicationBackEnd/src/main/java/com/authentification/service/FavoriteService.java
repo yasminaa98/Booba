@@ -3,10 +3,10 @@ package com.authentification.service;
 import com.authentification.entities.Annonce;
 import com.authentification.entities.Favorite;
 import com.authentification.entities.User;
-import com.authentification.repositories.AnnonceRepository;
 import com.authentification.repositories.FavoriteRepository;
 import com.authentification.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
@@ -29,18 +29,11 @@ public class FavoriteService {
         return favoriteRepository.findByUserId(id_user);
     }
 
-    /***
-     * Api for adding an annonce to the user's favorites
-     * @param annonce
-     * @param session
-     */
-
-    public void addToFavorites(Annonce annonce, HttpSession session) {
-       Long id = (Long) session.getAttribute("id");
-       if (id == null) {
+    public void addToFavorites(Annonce annonce, Long userId) {
+        if (userId == null) {
             throw new IllegalArgumentException("User ID cannot be null!");
-       }
-        Optional<User> user = userRepository.findById(id);
+        }
+        Optional<User> user = userRepository.findById(userId);
         if (user.isPresent()) {
             Optional<Favorite> existingFavorite = favoriteRepository.findByUserAndAnnonce(user.get(), annonce);
             if (existingFavorite.isPresent()) {
@@ -52,6 +45,8 @@ public class FavoriteService {
             favoriteRepository.save(favorite);
         }
     }
+
+
 
     /***
      * Api for removing an annonce from the user's favorite
@@ -67,5 +62,4 @@ public class FavoriteService {
         }
 
     }
-
 }

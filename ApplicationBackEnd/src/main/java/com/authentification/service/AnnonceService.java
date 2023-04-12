@@ -1,7 +1,9 @@
 package com.authentification.service;
 
 import com.authentification.entities.Annonce;
+import com.authentification.entities.AnnonceType;
 import com.authentification.entities.User;
+import com.authentification.jwt.JwtUtils;
 import com.authentification.payload.MessageResponse;
 import com.authentification.repositories.AnnonceRepository;
 import com.authentification.repositories.UserRepository;
@@ -22,13 +24,9 @@ public class AnnonceService {
     private AnnonceRepository annonceRepository ;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private JwtUtils jwtUtils ;
 
-    /***
-     * Api for getting annonce by ID
-     * @param id_annonce
-     * @return
-     * @throws NotFoundException
-     */
     public Annonce getAnnonceById(Long id_annonce) throws NotFoundException {
         Optional<Annonce> annonceOptional = annonceRepository.findById(id_annonce);
         if (annonceOptional.isPresent()) {
@@ -56,43 +54,49 @@ public class AnnonceService {
         }
     }
 
-
-
-
-
-    public ResponseEntity<MessageResponse> addAnnonce (Annonce annonce, HttpSession session) {
-
-        Annonce newAnnonce =new Annonce();
-        newAnnonce.setName(annonce.getName());
-        newAnnonce.setPicture(annonce.getPicture());
-        newAnnonce.setPrice(annonce.getPrice());
-        newAnnonce.setState(annonce.getState());
-        newAnnonce.setAgeChild(annonce.getAgeChild());
-        newAnnonce.setAgeToy(annonce.getAgeToy());
-        newAnnonce.setCategory(annonce.getCategory());
-        newAnnonce.setDescription(annonce.getDescription());
-        newAnnonce.setEstArchive(false);
-        Long id = (Long) session.getAttribute("id");
-
-        Optional<User> user=userRepository.findById(id);
-        if (user.isPresent()){
-            newAnnonce.setUser(user.get());
-            annonceRepository.save(newAnnonce);
-            return ResponseEntity.ok(new MessageResponse("Annonce Added successfully!"));
-
+    public List<Annonce> getAnnoncesForSale(Long userId) {
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            throw new RuntimeException("User not found: " + userId);
         }
-        return (ResponseEntity<MessageResponse>) ResponseEntity.badRequest();
+        return annonceRepository.findByUserAndType(user, AnnonceType.FOR_SALE);
     }
 
-    /***
-     * Api for modifying an existent annonce
-     * @param id_annonce
-     * @param annonce
-     * @param user
-     * @return
-     */
+    public List<Annonce> getAnnoncesForExchange(Long userId) {
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            throw new RuntimeException("User not found: " + userId);
+        }
+        return annonceRepository.findByUserAndType(user, AnnonceType.FOR_EXCHANGE);
+    }
 
-    public ResponseEntity<MessageResponse> modifyAnnonce(Long id_annonce , Annonce annonce, User user) {
+
+
+    public ResponseEntity<MessageResponse> addAnnonce(Annonce annonce, String token) {
+
+        String username = jwtUtils.getUserNameFromJwtToken(token);
+        Optional<User> user = userRepository.findByUsername(username);
+        if (user.isPresent()) {
+            Annonce newAnnonce = new Annonce();
+            newAnnonce.setName(annonce.getName());
+            newAnnonce.setPicture(annonce.getPicture());
+            newAnnonce.setPrice(annonce.getPrice());
+            newAnnonce.setState(annonce.getState());
+            newAnnonce.setAgeChild(annonce.getAgeChild());
+            newAnnonce.setAgeToy(annonce.getAgeToy());
+            newAnnonce.setCategory(annonce.getCategory());
+            newAnnonce.setDescription(annonce.getDescription());
+            newAnnonce.setEstArchive(false);
+            newAnnonce.setUser(user.get());
+
+            annonceRepository.save(newAnnonce);
+            return ResponseEntity.ok(new MessageResponse("Annonce added successfully!"));
+        }
+
+        return ResponseEntity.badRequest().body(new MessageResponse("Failed to add annonce."));
+    }
+
+    public ResponseEntity<MessageResponse> modifyAnnonce(Long id_annonce , Annonce annonce) {
           Annonce annonceExistent = annonceRepository.findById(id_annonce).orElse(null) ;
         if ( annonceExistent == null) {
             return ResponseEntity.badRequest().body(new MessageResponse("Annonce Not found")) ;
@@ -113,12 +117,6 @@ public class AnnonceService {
         }
     }
 
-    /***
-     * Api for archiving an annonce
-     * @param id_annonce
-     * @return
-     */
-
     public Annonce archiveAnnonce(Long id_annonce) {
         Annonce annonce = annonceRepository.findById(id_annonce).orElse(null) ;
         if (annonce == null) {
@@ -127,12 +125,5 @@ public class AnnonceService {
         annonce.setEstArchive(true);
         return annonceRepository.save(annonce);
     }
-
-    /***
-     * Api for getting an annonce object by annonce_id
-     * @param id_annonce
-     * @return
-     * @throws NotFoundException
-     */
 
 }

@@ -3,16 +3,20 @@ package com.authentification.controllers;
 import com.authentification.entities.Annonce;
 import com.authentification.entities.Favorite;
 import com.authentification.entities.User;
+import com.authentification.jwt.JwtUtils;
+import com.authentification.payload.MessageResponse;
 import com.authentification.service.FavoriteService;
 import com.authentification.service.AnnonceService;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.List;
-import java.util.Optional;
 
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -23,6 +27,8 @@ public class FavoriteController {
     private FavoriteService favoriteService;
     @Autowired
     private AnnonceService annonceService;
+    @Autowired
+    private JwtUtils jwtUtils ;
 
     /***
      * Api for getting all the favorites of a user
@@ -34,17 +40,15 @@ public class FavoriteController {
         return favoriteService.getAllFavorites(id_user);
     }
 
-    /***
-     * Api for adding an annonce to the user's favorites
-     * @param id_annonce
-     * @param session
-     * @throws NotFoundException
-     */
     @PostMapping("/{id_annonce}/add-to-favorites")
-    public void addToFavorites(@PathVariable Long id_annonce, HttpSession session)throws NotFoundException {
+    public ResponseEntity<?> addToFavorites(@PathVariable Long id_annonce, HttpServletRequest request) throws NotFoundException {
+        String token = request.getHeader("Authorization").substring(7);
+        Long userId = jwtUtils.getUserIdFromToken(token);
         Annonce annonce = annonceService.getAnnonceById(id_annonce);
-        favoriteService.addToFavorites(annonce, session);
+        favoriteService.addToFavorites(annonce, userId);
+        return ResponseEntity.ok(new MessageResponse("Annonce added to favorites successfully!"));
     }
+
 
     /***
      * Api for removing an annonce from the user's favorites

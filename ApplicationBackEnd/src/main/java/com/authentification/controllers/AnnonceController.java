@@ -4,7 +4,6 @@ import com.authentification.entities.Annonce;
 import com.authentification.entities.User;
 import com.authentification.payload.MessageResponse;
 import com.authentification.service.AnnonceService;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +19,8 @@ public class AnnonceController {
 
     @Autowired
     private AnnonceService annonceService ;
+
+    private User user ;
 
     @GetMapping("/getAll")
     public List<Annonce> getAllAnnonce() {
@@ -38,29 +39,37 @@ public class AnnonceController {
 
     }
 
-
-    /***
-     * Api for adding a new annonce
-     * @param annonce
-     * @param session
-     * @return
-     */
-    @PostMapping("/add-annonce")
-    public ResponseEntity<MessageResponse> addAnnonce (@RequestBody Annonce annonce, HttpSession session) throws NotFoundException {
-        return annonceService.addAnnonce(annonce,session);
+    @GetMapping("/{id_user}/for-sale")
+    public List<Annonce> getAnnoncesForSale(@PathVariable Long id_user) {
+        return annonceService.getAnnoncesForSale(id_user);
     }
+
+    @GetMapping("/{id_user}/for-exchange")
+    public List<Annonce> getAnnoncesForExchange(@PathVariable Long id_user) {
+        return annonceService.getAnnoncesForExchange(id_user);
+    }
+
+
+
+    @PostMapping("/add")
+        public ResponseEntity<MessageResponse> addAnnonce(@RequestBody Annonce annonce,
+                                                          @RequestHeader(value = "Authorization") String token) {
+            return annonceService.addAnnonce(annonce, token);
+    }
+
+
+
 
     /***
      * Api for modifying an existent annonce
      * @param id_annonce
      * @param annonce
-     * @param user
      * @return
      */
     @PutMapping("/{id_annonce}/modify-annonce")
     public ResponseEntity<MessageResponse> modifyAnnonce (@PathVariable("id_annonce") Long id_annonce ,
-                                                          @RequestBody Annonce annonce, User user) {
-        return annonceService.modifyAnnonce(id_annonce ,annonce,user) ;
+                                                          @RequestBody Annonce annonce) {
+        return annonceService.modifyAnnonce(id_annonce ,annonce) ;
     }
 
     /***

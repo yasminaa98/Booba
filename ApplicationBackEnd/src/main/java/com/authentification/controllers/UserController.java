@@ -21,45 +21,24 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
-	/***
-	 * Api for signing in
-	 * @param loginRequest
-	 * @param session
-	 * @return
-	 */
-	@PostMapping("/signin")
-	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest, HttpSession session) {
-		return userService.authenticateUser(loginRequest, session);
-	}
 
-	/***
-	 * Api for signing up
-	 * @param
-	 * @param
-	 * @return
-	 */
+
+		@PostMapping("/signin")
+		public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
+			return userService.authenticateUser(loginRequest);
+		}
+
+
+
+
 
 	@PostMapping("/signup")
-	public ResponseEntity<?> registerUser(@ModelAttribute SignupRequest signUpRequest, HttpSession session) throws IOException {
-		Map<String, Object> response = userService.registerUser(signUpRequest, session);
-		if (response.containsKey("id")) {
-			return ResponseEntity.ok().body(response);
-		} else {
-			return ResponseEntity.badRequest().body(response);
-		}
+	public ResponseEntity<?> registerUser(@RequestBody SignupRequest signUpRequest) throws IOException {
+		Map<String, Object> response = userService.registerUser(signUpRequest);
+		return ResponseEntity.ok().body(response);
 	}
 
-	/*@PostMapping("/signup")
-	public ResponseEntity<?> registerUser(@RequestBody SignupRequest signUpRequest, HttpSession session) throws IOException {
-		Map<String, Object> response = userService.registerUser(signUpRequest, session);
-		return ResponseEntity.status((int) response.get("status")).body(response.get("body"));
-	}*/
 
-	/*@PostMapping("/signup")
-	public ResponseEntity<?> registerUser(@RequestPart("profilePicture") MultipartFile profilePicture,
-										  @Valid @RequestBody SignupRequest signUpRequest,
-										  HttpSession session) throws IOException
-	{return userService.registerUser(signUpRequest, session);}*/
 
 
 

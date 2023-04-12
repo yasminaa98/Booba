@@ -1,9 +1,12 @@
 package com.authentification.service;
 
 import com.authentification.entities.User;
+import com.authentification.jwt.JwtUtils;
 import com.authentification.payload.MessageResponse;
 import com.authentification.repositories.UserRepository;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +19,8 @@ public class AccountService {
 
     @Autowired
     private UserRepository userRepository;
+
+    JwtUtils jwtUtils ;
 
     /***
      * Api for getting a user object by username
@@ -46,9 +51,9 @@ public class AccountService {
         existentUser.setFirstname(newFirstName);
         try {
             userRepository.save(existentUser);
-            return ResponseEntity.ok(new MessageResponse("Firstname modified successfully!"));
+            return ResponseEntity.ok(new MessageResponse("Lastname modified successfully!"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Failed to modify firstname"));
+            return ResponseEntity.badRequest().body(new MessageResponse("Failed to modify lastname"));
         }
     }
 
