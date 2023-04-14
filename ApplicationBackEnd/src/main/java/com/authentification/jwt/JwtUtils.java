@@ -5,6 +5,7 @@ import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import com.authentification.service.UserDetailsImpl;
@@ -36,7 +37,18 @@ import com.authentification.service.UserDetailsImpl;
 			return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
 		}
 
-		public boolean validateJwtToken(String authToken) {
+	public void invalidateJwtToken(String token) {
+		try {
+			Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
+		} catch (ExpiredJwtException e) {
+			// Token is already expired. Do nothing.
+		} catch (JwtException e) {
+			throw new BadCredentialsException("Invalid JWT token: " + e.getMessage());
+		}
+	}
+
+
+	public boolean validateJwtToken(String authToken) {
 			try {
 				Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
 				return true;

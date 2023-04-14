@@ -9,13 +9,16 @@ import com.authentification.repositories.AnnonceRepository;
 import com.authentification.repositories.UserRepository;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import javax.servlet.http.HttpSession;
+
 import javax.transaction.Transactional;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 
 @Service
 @Transactional
@@ -28,6 +31,28 @@ public class AnnonceService {
     @Autowired
     private JwtUtils jwtUtils ;
 
+    public List<Map<String, Object>> getAllAnnonce() {
+        List<Annonce> annonces = annonceRepository.findAll();
+        List<Map<String, Object>> response = new ArrayList<>();
+
+        for (Annonce annonce : annonces) {
+            Map<String, Object> annonceMap = new HashMap<>();
+            annonceMap.put("id", annonce.getId_annonce());
+            annonceMap.put("name", annonce.getName());
+            annonceMap.put("price", annonce.getPrice());
+            annonceMap.put("type", annonce.getType());
+            annonceMap.put("state", annonce.getState());
+            annonceMap.put("ageChild", annonce.getAgeChild());
+            annonceMap.put("ageToy", annonce.getAgeToy());
+            annonceMap.put("category", annonce.getCategory());
+            annonceMap.put("description", annonce.getDescription());
+            annonceMap.put("user_id", annonce.getUser().getId_user());
+            response.add(annonceMap);
+        }
+
+        return response;
+    }
+
     public Annonce getAnnonceById(Long id_annonce) throws NotFoundException {
         Optional<Annonce> annonceOptional = annonceRepository.findById(id_annonce);
         if (annonceOptional.isPresent()) {
@@ -36,11 +61,6 @@ public class AnnonceService {
             throw new NotFoundException("Annonce with id " + id_annonce + " not found.");
         }
     }
-
-    public List<Annonce> getAllAnnonce() {
-        return annonceRepository.findAll();
-    }
-
     public List<Annonce> getAnnonceByCategory(String category) {
         return annonceRepository.findByCategory(category);
     }
@@ -77,14 +97,13 @@ public class AnnonceService {
 
 
 
-    public ResponseEntity<MessageResponse> addAnnonce(Annonce annonce, String token) {
+    public ResponseEntity<MessageResponse> addAnnonce(Annonce annonce, String token) throws IOException {
 
         String username = jwtUtils.getUserNameFromJwtToken(token);
         Optional<User> user = userRepository.findByUsername(username);
         if (user.isPresent()) {
             Annonce newAnnonce = new Annonce();
             newAnnonce.setName(annonce.getName());
-            newAnnonce.setPicture(annonce.getPicture());
             newAnnonce.setPrice(annonce.getPrice());
             newAnnonce.setType(annonce.getType());
             newAnnonce.setState(annonce.getState());
@@ -95,41 +114,67 @@ public class AnnonceService {
             newAnnonce.setEstArchive(false);
             newAnnonce.setUser(user.get());
 
+            if (annonce.getPicture() != null) {
+                String fileName = annonce.getPicture().getOriginalFilename();
+                Path path = Paths.get("C:/AnnoncePictures/" + fileName);
+                Files.write(path, annonce.getPicture().getBytes());
+                newAnnonce.setPicturePath(path.toString());
+            }
+
             annonceRepository.save(newAnnonce);
             return ResponseEntity.ok(new MessageResponse("Annonce added successfully!"));
         }
-
         return ResponseEntity.badRequest().body(new MessageResponse("Failed to add annonce."));
     }
 
-    public ResponseEntity<MessageResponse> modifyAnnonce(Long id_annonce , Annonce annonce) {
-          Annonce annonceExistent = annonceRepository.findById(id_annonce).orElse(null) ;
-        if ( annonceExistent == null) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Annonce Not found")) ;
+    public ResponseEntity<MessageResponse> modifyAnnonce(Long id, Annonce annonce, String token) {
+        String username = jwtUtils.getUserNameFromJwtToken(token);
+        Optional<User> user = userRepository.findByUsername(username);
+
+        if (user.isPresent()) {
+            Optional<Annonce> annonceToUpdate = annonceRepository.findById(id);
+            if (annonceToUpdate.isPresent()) {
+                Annonce updatedAnnonce = annonceToUpdate.get();
+                if (updatedAnnonce.getUser().getId_user().equals(user.get().getId_user())) {
+                    updatedAnnonce.setName(annonce.getName());
+                    updatedAnnonce.setPrice(annonce.getPrice());
+                    updatedAnnonce.setType(annonce.getType());
+                    updatedAnnonce.setState(annonce.getState());
+                    updatedAnnonce.setAgeChild(annonce.getAgeChild());
+                    updatedAnnonce.setAgeToy(annonce.getAgeToy());
+                    updatedAnnonce.setCategory(annonce.getCategory());
+                    updatedAnnonce.setDescription(annonce.getDescription());
+                    annonceRepository.save(updatedAnnonce);
+                    return ResponseEntity.ok(new MessageResponse("Annonce modified successfully!"));
+                }
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new MessageResponse("You are not allowed to modify this annonce."));
+            }
+            return ResponseEntity.notFound().build();
         }
-               annonceExistent.setName(annonce.getName());
-               annonceExistent.setPicture(annonce.getPicture());
-               annonceExistent.setPrice(annonce.getPrice());
-               annonceExistent.setState(annonce.getState());
-               annonceExistent.setAgeChild(annonce.getAgeChild());
-               annonceExistent.setAgeToy(annonce.getAgeToy());
-               annonceExistent.setCategory(annonce.getCategory());
-               annonceExistent.setDescription(annonce.getDescription());
-        try {
-            annonceRepository.save(annonceExistent);
-            return ResponseEntity.ok(new MessageResponse("Modified successfully!"));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Not modified"));
-        }
+        return ResponseEntity.badRequest().body(new MessageResponse("Failed to modify annonce."));
     }
 
-    public Annonce archiveAnnonce(Long id_annonce) {
-        Annonce annonce = annonceRepository.findById(id_annonce).orElse(null) ;
-        if (annonce == null) {
-            return null ;
+    public ResponseEntity<MessageResponse> archiveAnnonce(Long id, String token) {
+        String username = jwtUtils.getUserNameFromJwtToken(token);
+        Optional<User> user = userRepository.findByUsername(username);
+
+        if (user.isPresent()) {
+            Optional<Annonce> annonceToArchive = annonceRepository.findById(id);
+            if (annonceToArchive.isPresent()) {
+                Annonce archivedAnnonce = annonceToArchive.get();
+                if (archivedAnnonce.getUser().getId_user().equals(user.get().getId_user())) {
+                    archivedAnnonce.setEstArchive(true);
+                    annonceRepository.save(archivedAnnonce);
+                    return ResponseEntity.ok(new MessageResponse("Annonce archived successfully!"));
+                }
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new MessageResponse("You are not allowed to archive this annonce."));
+            }
+            return ResponseEntity.notFound().build();
         }
-        annonce.setEstArchive(true);
-        return annonceRepository.save(annonce);
+        return ResponseEntity.badRequest().body(new MessageResponse("Failed to archive annonce."));
     }
 
 }
+
+
+

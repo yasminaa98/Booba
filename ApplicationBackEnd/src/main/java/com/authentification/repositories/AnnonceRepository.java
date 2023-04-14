@@ -11,9 +11,6 @@ import java.util.List;
 @Repository
 public interface AnnonceRepository extends JpaRepository<Annonce,Long> {
     List<Annonce> findByCategory(String category);
-
     List<Annonce> findByUserAndType(User user, AnnonceType type);
-
-
-    }
+}
 

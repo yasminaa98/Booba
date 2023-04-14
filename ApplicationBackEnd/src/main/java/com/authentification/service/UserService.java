@@ -18,15 +18,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -51,7 +48,6 @@ public class UserService {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
-
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtUtils.generateJwtToken(authentication);
 
@@ -91,14 +87,12 @@ public class UserService {
                 signUpRequest.getPhone(),
                 signUpRequest.getDescription(),
                 encoder.encode(signUpRequest.getPassword()));
-
         if (signUpRequest.getProfilePicture() != null) {
             String fileName = signUpRequest.getProfilePicture().getOriginalFilename();
             Path path = Paths.get("C:/ProfilePictures/" + fileName) ;
             Files.write(path, signUpRequest.getProfilePicture().getBytes());
             user.setProfilePicturePath(path.toString());
         }
-
         userRepository.save(user);
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(signUpRequest.getUsername(), signUpRequest.getPassword()));
@@ -111,9 +105,21 @@ public class UserService {
         return response;
     }
 
-
-
-
-
+    public void logoutUser(HttpServletRequest request) {
+        String token = extractJwtFromRequest(request);
+        jwtUtils.invalidateJwtToken(token);
+    }
+    private String extractJwtFromRequest(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
+    }
 }
+
+
+
+
+
 

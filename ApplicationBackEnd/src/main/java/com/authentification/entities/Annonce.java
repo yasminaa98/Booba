@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -22,9 +24,6 @@ public class Annonce {
         @Column(name = "name")
         private String name;
 
-        @Column(name = "picture")
-        private String picture;
-
         @Column(name="price")
         private String price ;
 
@@ -33,6 +32,12 @@ public class Annonce {
 
         @Enumerated(EnumType.STRING)
         private AnnonceType type;
+
+        @Column
+        private String picturePath ;
+
+        @Transient
+        private MultipartFile picture ;
 
         @Column(name = "ageChild")
         private String ageChild;
