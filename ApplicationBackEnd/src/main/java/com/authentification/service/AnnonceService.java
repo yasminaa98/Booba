@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,20 +55,24 @@ public class AnnonceService {
         }
     }
 
-    public List<Annonce> getAnnoncesForSale(Long userId) {
-        User user = userRepository.findById(userId).orElse(null);
-        if (user == null) {
-            throw new RuntimeException("User not found: " + userId);
+    public List<Annonce> getAnnoncesForSale(String token) {
+        String username = jwtUtils.getUserNameFromJwtToken(token);
+        Optional<User> user = userRepository.findByUsername(username);
+        if (user.isPresent()) {
+            return annonceRepository.findByUserAndType(user.get(), AnnonceType.FOR_SALE);
+        } else {
+            return Collections.emptyList();
         }
-        return annonceRepository.findByUserAndType(user, AnnonceType.FOR_SALE);
     }
 
-    public List<Annonce> getAnnoncesForExchange(Long userId) {
-        User user = userRepository.findById(userId).orElse(null);
-        if (user == null) {
-            throw new RuntimeException("User not found: " + userId);
+    public List<Annonce> getAnnoncesForExchange(String token) {
+        String username = jwtUtils.getUserNameFromJwtToken(token);
+        Optional<User> user = userRepository.findByUsername(username);
+        if (user.isPresent()) {
+            return annonceRepository.findByUserAndType(user.get(), AnnonceType.FOR_EXCHANGE);
+        } else {
+            return Collections.emptyList();
         }
-        return annonceRepository.findByUserAndType(user, AnnonceType.FOR_EXCHANGE);
     }
 
 
@@ -81,6 +86,7 @@ public class AnnonceService {
             newAnnonce.setName(annonce.getName());
             newAnnonce.setPicture(annonce.getPicture());
             newAnnonce.setPrice(annonce.getPrice());
+            newAnnonce.setType(annonce.getType());
             newAnnonce.setState(annonce.getState());
             newAnnonce.setAgeChild(annonce.getAgeChild());
             newAnnonce.setAgeToy(annonce.getAgeToy());

@@ -1,15 +1,21 @@
 package com.authentification.controllers;
 
 import com.authentification.entities.Annonce;
+import com.authentification.entities.AnnonceType;
 import com.authentification.entities.User;
+import com.authentification.jwt.JwtUtils;
 import com.authentification.payload.MessageResponse;
+import com.authentification.repositories.AnnonceRepository;
+import com.authentification.repositories.UserRepository;
 import com.authentification.service.AnnonceService;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -19,6 +25,15 @@ public class AnnonceController {
 
     @Autowired
     private AnnonceService annonceService ;
+
+    @Autowired
+    private UserRepository userRepository ;
+
+    @Autowired
+    private AnnonceRepository annonceRepository ;
+
+    @Autowired
+    private JwtUtils jwtUtils ;
 
     private User user ;
 
@@ -34,20 +49,20 @@ public class AnnonceController {
 
     @GetMapping("/{id_annonce}/user")
     public User getUserByAnnonceId(@PathVariable("id_annonce") Long id_annonce) throws NotFoundException {
-
             return annonceService.getAnnonceOwner(id_annonce);
-
     }
 
-    @GetMapping("/{id_user}/for-sale")
-    public List<Annonce> getAnnoncesForSale(@PathVariable Long id_user) {
-        return annonceService.getAnnoncesForSale(id_user);
+    @GetMapping("/for-sale")
+    public List<Annonce> getAnnoncesForSale(@RequestHeader("Authorization") String token) {
+      return annonceService.getAnnoncesForSale(token);
     }
 
-    @GetMapping("/{id_user}/for-exchange")
-    public List<Annonce> getAnnoncesForExchange(@PathVariable Long id_user) {
-        return annonceService.getAnnoncesForExchange(id_user);
+
+    @GetMapping("/for-exchange")
+    public List<Annonce> getAnnonceForExchange(@RequestHeader("Authorization") String token) {
+       return annonceService.getAnnoncesForExchange(token);
     }
+
 
 
 
