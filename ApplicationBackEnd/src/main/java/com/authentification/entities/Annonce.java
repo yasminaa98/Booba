@@ -16,7 +16,6 @@ import java.util.List;
 @NoArgsConstructor
 @Table(name="Annonce")
 public class Annonce {
-
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id_annonce;
