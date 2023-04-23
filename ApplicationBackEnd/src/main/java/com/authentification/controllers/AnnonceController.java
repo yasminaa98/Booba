@@ -21,7 +21,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/annonces")
 public class AnnonceController {
-
     @Autowired
     private AnnonceService annonceService ;
     @Autowired

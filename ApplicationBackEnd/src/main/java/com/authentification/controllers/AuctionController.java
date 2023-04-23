@@ -34,6 +34,12 @@ public class AuctionController {
     public List<Map<String, Object>> getAllAuction() {
         return auctionService.getAllAuction();
     }
+
+    @GetMapping("/{id_auction}/getPrice")
+    public ResponseEntity<MessageResponse> getAuctionPrice(@PathVariable("id_auction") Long id,
+                                                     @RequestHeader(value = "Authorization") String token) {
+        return auctionService.getAuctionPrice(token,id);
+    }
     @PostMapping("/addAuction")
     public ResponseEntity<MessageResponse> addAnnonce(@RequestBody Auction auction,
                                                       @RequestHeader(value = "Authorization") String token) throws IOException {

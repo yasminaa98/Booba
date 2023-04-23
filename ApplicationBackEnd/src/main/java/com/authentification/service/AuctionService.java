@@ -2,6 +2,7 @@ package com.authentification.service;
 
 import com.authentification.entities.Annonce;
 import com.authentification.entities.Auction;
+import com.authentification.entities.Bid;
 import com.authentification.entities.User;
 import com.authentification.jwt.JwtUtils;
 import com.authentification.payload.MessageResponse;
@@ -121,6 +122,20 @@ public class AuctionService {
         }
         return ResponseEntity.badRequest().body(new MessageResponse("Failed to update price"));
             }
+    public ResponseEntity<MessageResponse> getAuctionPrice(String token,Long id_auction ) {
+        Auction existentAuction = auctionRepository.findById(id_auction).orElse(null);
+        if (existentAuction == null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Auction not found"));
+        }
+        String username = jwtUtils.getUserNameFromJwtToken(token);
+        Optional<User> user = userRepository.findByUsername(username);
+        if (user.isPresent()) {
+        String price=existentAuction.getInitial_price();
+
+            return ResponseEntity.ok(new MessageResponse("the price is " +price));
+        }
+        return ResponseEntity.badRequest().body(new MessageResponse("Failed to update price"));
+    }
 
         }
 

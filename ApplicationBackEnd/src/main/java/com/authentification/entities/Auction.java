@@ -48,4 +48,5 @@ public class Auction {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_annonce")
     private Annonce annonce;
+
 }
