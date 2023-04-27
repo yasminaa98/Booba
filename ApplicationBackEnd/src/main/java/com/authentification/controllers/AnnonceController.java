@@ -43,6 +43,11 @@ public class AnnonceController {
     public User getUserByAnnonceId(@PathVariable("id_annonce") Long id_annonce) throws NotFoundException {
             return annonceService.getAnnonceOwner(id_annonce);
     }
+    @GetMapping("/getUserAnnonces")
+    public List<Map<String, Object>> getUserAnnonces(
+                                @RequestHeader(value = "Authorization") String token) throws NotFoundException {
+        return annonceService.getUserAnnonces(token);
+    }
     @GetMapping("/for-sale")
     public List<Annonce> getAnnoncesForSale(@RequestHeader("Authorization") String token) {
       return annonceService.getAnnoncesForSale(token);

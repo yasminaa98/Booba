@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @Entity
@@ -33,7 +34,7 @@ public class Auction {
     @Transient
     private MultipartFile picture ;
 
-    @Column(name = "start_datetime")
+    @Column(name = "start_dateTime")
     private String start_dateTime;
 
     @Column(name = "end_dateTime")
@@ -48,5 +49,9 @@ public class Auction {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_annonce")
     private Annonce annonce;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "auction", cascade = CascadeType.REMOVE)
+    private List<Bid> Bids;
 
 }

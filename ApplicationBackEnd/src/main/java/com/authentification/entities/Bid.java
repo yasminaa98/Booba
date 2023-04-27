@@ -16,7 +16,7 @@ public class Bid {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_bid;
 
-    @Column(name="Note")
+    @Column(name="note")
     private String note ;
 
     @Column(name="price_proposed")
@@ -28,7 +28,7 @@ public class Bid {
     private User user;
 
     @JsonIgnore
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_auction")
     private Auction auction;
 }

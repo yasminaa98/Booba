@@ -58,6 +58,17 @@ public class User {
 	@JsonIgnore
 	@OneToMany(mappedBy = "user")
 	private List<Favorite> favorites;
+	@JsonIgnore
+	@OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+	private List<Bid> bids;
+	@JsonIgnore
+	@OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+	private List<Auction> auctions;
+	@JsonIgnore
+	@OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+	private List<Annonce> annonces;
+
+
 
 	public User(String username,String email, String firstname,
 				String lastname, String homeAddress, String avgResponseTime, int phone,

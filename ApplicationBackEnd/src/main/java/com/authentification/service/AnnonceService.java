@@ -1,8 +1,6 @@
 package com.authentification.service;
 
-import com.authentification.entities.Annonce;
-import com.authentification.entities.AnnonceType;
-import com.authentification.entities.User;
+import com.authentification.entities.*;
 import com.authentification.jwt.JwtUtils;
 import com.authentification.payload.MessageResponse;
 import com.authentification.repositories.AnnonceRepository;
@@ -173,8 +171,29 @@ public class AnnonceService {
         }
         return ResponseEntity.badRequest().body(new MessageResponse("Failed to archive annonce."));
     }
+    public List<Map<String, Object>> getUserAnnonces(String token) {
+        String Username = jwtUtils.getUserNameFromJwtToken(token);
+        Optional<User> user = userRepository.findByUsername(Username);
+        List<Annonce> annonces = annonceRepository.findByUser(user);
+        List<Map<String, Object>> response = new ArrayList<>();
+        if (user.isPresent()) {
+            for (Annonce annonce:annonces) {
+                Map<String, Object> annonceMap = new HashMap<>();
+                annonceMap.put("id", annonce.getId_annonce());
+                annonceMap.put("name", annonce.getName());
+                annonceMap.put("price", annonce.getPrice());
+                annonceMap.put("type", annonce.getType());
+                annonceMap.put("state", annonce.getState());
+                annonceMap.put("ageChild", annonce.getAgeChild());
+                annonceMap.put("ageToy", annonce.getAgeToy());
+                annonceMap.put("category", annonce.getCategory());
+                annonceMap.put("description", annonce.getDescription());
+                response.add(annonceMap);
+            }}
+
+        return response;
+    }
 
 }
-
 
 

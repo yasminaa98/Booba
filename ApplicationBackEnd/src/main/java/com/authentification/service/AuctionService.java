@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -41,12 +40,12 @@ public class AuctionService {
             Map<String, Object> auctionMap = new HashMap<>();
             auctionMap.put("id", auction.getId_auction());
             auctionMap.put("name", auction.getName());
-            auctionMap.put("price", auction.getInitial_price());
-            auctionMap.put("start_datetime", auction.getStart_dateTime());
-            auctionMap.put("end_date_time", auction.getEnd_dateTime());
+            auctionMap.put("initial_price", auction.getInitial_price());
+            auctionMap.put("start_dateTime", auction.getStart_dateTime());
+            auctionMap.put("end_dateTime", auction.getEnd_dateTime());
             auctionMap.put("description", auction.getDescription());
             auctionMap.put("user_id", auction.getUser().getId_user());
-            auctionMap.put("annonce_id", auction.getAnnonce().getId_annonce());
+            auctionMap.put("id_annonce", auction.getAnnonce().getId_annonce());
             response.add(auctionMap);
         }
         return response;
@@ -132,9 +131,9 @@ public class AuctionService {
         if (user.isPresent()) {
         String price=existentAuction.getInitial_price();
 
-            return ResponseEntity.ok(new MessageResponse("the price is " +price));
+            return ResponseEntity.ok(new MessageResponse(price));
         }
-        return ResponseEntity.badRequest().body(new MessageResponse("Failed to update price"));
+        return ResponseEntity.badRequest().body(new MessageResponse("Failed to get price"));
     }
 
         }

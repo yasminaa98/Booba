@@ -41,12 +41,13 @@ public class AuctionController {
         return auctionService.getAuctionPrice(token,id);
     }
     @PostMapping("/addAuction")
-    public ResponseEntity<MessageResponse> addAnnonce(@RequestBody Auction auction,
+    public ResponseEntity<MessageResponse> addAnnonce(
+            @RequestBody Auction auction,
                                                       @RequestHeader(value = "Authorization") String token) throws IOException {
         return auctionService.addAuction(auction,token);
     }
     @PostMapping("/{id_annonce}/addAuctionToAnnonce")
-    public ResponseEntity<MessageResponse> modifyAnnonce(@PathVariable("id_annonce") Long id,
+    public ResponseEntity<MessageResponse> addAuctionToAnnonce(@PathVariable("id_annonce") Long id,
                                                          @RequestBody Auction auction,
                                                          @RequestHeader(value = "Authorization") String token) throws IOException {
         return auctionService.addAuctionToAnnonce(id, auction, token);

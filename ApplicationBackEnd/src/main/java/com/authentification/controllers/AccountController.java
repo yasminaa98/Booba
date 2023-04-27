@@ -21,9 +21,13 @@ public class AccountController {
      * @param username
      * @return
      */
-    @GetMapping("/getUser/{username}")
+    @GetMapping("/getUserByUsername/{username}")
     public ResponseEntity<Optional<User>> getUserByUsername(@PathVariable("username") String username) {
         return accountService.getUserByUsername(username);
+    }
+    @GetMapping("/getUserById/{id_user}")
+    public ResponseEntity<Optional<User>> getUserById(@PathVariable("id_user") Long id_user) {
+        return accountService.getUserById(id_user);
     }
 
     /***

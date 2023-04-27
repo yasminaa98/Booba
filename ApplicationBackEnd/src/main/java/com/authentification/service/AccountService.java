@@ -35,6 +35,14 @@ public class AccountService {
             return ResponseEntity.notFound().build();
         }
     }
+    public ResponseEntity<Optional<User>> getUserById (Long id_user){
+        Optional<User> user = userRepository.findById(id_user);
+        if (user != null) {
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
 
     /***

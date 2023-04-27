@@ -1,6 +1,5 @@
 package com.authentification.service;
 
-import com.authentification.entities.Annonce;
 import com.authentification.entities.Auction;
 import com.authentification.entities.Bid;
 import com.authentification.entities.User;
@@ -21,7 +20,6 @@ import java.util.*;
 @Service
 @Transactional
 public class BidService {
-
     @Autowired
     private AnnonceRepository annonceRepository;
     @Autowired
@@ -50,28 +48,31 @@ public class BidService {
             newBid.setUser(user.get());
             newBid.setAuction(auction.get());
             bidRepository.save(newBid);
+            int initial = Integer.parseInt(existentAuction.getInitial_price());
+            int proposed = Integer.parseInt(newBid.getPrice_proposed());
+            if (initial <= proposed) {
+                existentAuction.setInitial_price(String.valueOf(proposed));
+            }
             return ResponseEntity.ok(new MessageResponse("bid added successfully!"));
         }
         return ResponseEntity.badRequest().body(new MessageResponse("Failed to add bid."));
     }
-
-    public ResponseEntity<MessageResponse> updatePrice(String newPrice, String token, Long id_bid) {
-        Bid existentBid = bidRepository.findById(id_bid).orElse(null);
-        if (existentBid == null) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Auction not found"));
+    public ResponseEntity<MessageResponse> updatePrice(String newPrice, String token, Long id_auction) {
+        Auction auction = auctionRepository.findById(id_auction).orElse(null);
+        if (auction == null) {
+            return ResponseEntity.badRequest().body(new MessageResponse(" bid not found"));
         }
         String username = jwtUtils.getUserNameFromJwtToken(token);
         Optional<User> user = userRepository.findByUsername(username);
-        Auction auction = existentBid.getAuction();
+        Bid bid = bidRepository.findBidByUserAndAuction(user,auction);
         if (user.isPresent()) {
-            existentBid.setPrice_proposed(newPrice);
-            bidRepository.save(existentBid);
+            bid.setPrice_proposed(newPrice);
+            bidRepository.save(bid);
             int initial = Integer.parseInt(auction.getInitial_price());
-            int proposed = Integer.parseInt(existentBid.getPrice_proposed());
+            int proposed = Integer.parseInt(bid.getPrice_proposed());
             if (initial <= proposed) {
                 auction.setInitial_price(newPrice);
             }
-
             return ResponseEntity.ok(new MessageResponse("price updates"));
         }
         return ResponseEntity.badRequest().body(new MessageResponse("Failed to update price"));
@@ -83,7 +84,6 @@ public class BidService {
         if (auction == null) {
             return Collections.emptyList();
         }
-
         List<Bid> bids = bidRepository.findByAuction(auction);
         List<Map<String, Object>> response = new ArrayList<>();
         String username = jwtUtils.getUserNameFromJwtToken(token);
@@ -93,12 +93,30 @@ public class BidService {
             Map<String, Object> annonceMap = new HashMap<>();
             annonceMap.put("id", bid.getId_bid());
             annonceMap.put("note", bid.getNote());
-            annonceMap.put("price proposed", bid.getPrice_proposed());
+            annonceMap.put("price_proposed", bid.getPrice_proposed());
             annonceMap.put("auction_id", bid.getAuction().getId_auction());
-            annonceMap.put("user_id", bid.getUser().getId_user());
+            annonceMap.put("username", bid.getUser().getUsername());
             response.add(annonceMap);
         }}
 
         return response;
     }
+    public Map<String, Object> getUserBid(String token, Long id_auction){
+        Auction auction = auctionRepository.findById(id_auction).orElse(null);
+        if (auction == null) {
+            return null;
+        }
+        String username = jwtUtils.getUserNameFromJwtToken(token);
+        Optional<User> user = userRepository.findByUsername(username);
+        List<Bid> bids = bidRepository.findByUserAndAuction(user,auction);
+        Map<String, Object> bidMap = new HashMap<>();
+        if (user.isPresent()) {
+            Bid bid = bids.get(0);
+            bidMap.put("note",bid.getNote());
+            bidMap.put("price_proposed",bid.getPrice_proposed());
+            bidMap.put("username",bid.getUser().getUsername());
+            bidMap.put("auction_id",bid.getAuction().getId_auction());
+        }
+        return bidMap;
+}
 }
