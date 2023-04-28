@@ -252,7 +252,7 @@ public class AccountService {
             userRepository.deleteById(id_user);
             return ResponseEntity.ok(new MessageResponse("Deleted successfully!"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Not delete"));
+            return ResponseEntity.badRequest().body(new MessageResponse("Not deleted"));
         }
     }
 

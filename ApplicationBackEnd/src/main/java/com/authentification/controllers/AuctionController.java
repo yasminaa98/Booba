@@ -35,6 +35,11 @@ public class AuctionController {
         return auctionService.getAllAuction();
     }
 
+
+    @GetMapping("/getUserAuctions")
+    public List<Map<String, Object>> getUserAuctions(@RequestHeader(value = "Authorization") String token) {
+        return auctionService.getUserAuctions(token);
+    }
     @GetMapping("/{id_auction}/getPrice")
     public ResponseEntity<MessageResponse> getAuctionPrice(@PathVariable("id_auction") Long id,
                                                      @RequestHeader(value = "Authorization") String token) {
@@ -57,5 +62,9 @@ public class AuctionController {
                                                            @RequestParam("newPrice") String newPrice,
                                                            @RequestHeader(value = "Authorization") String token) throws IOException {
         return auctionService.updatePrice(token,id_auction, newPrice);
+    }
+    @DeleteMapping("/{id_auction}/delete-auction")
+    public ResponseEntity<?> deleteAuction(@PathVariable("id_auction") Long id_auction) {
+        return auctionService.deleteAuction(id_auction);
     }
 }

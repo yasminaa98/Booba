@@ -136,6 +136,41 @@ public class AuctionService {
         return ResponseEntity.badRequest().body(new MessageResponse("Failed to get price"));
     }
 
+    public List<Map<String, Object>> getUserAuctions(String token) {
+        String Username = jwtUtils.getUserNameFromJwtToken(token);
+        Optional<User> user = userRepository.findByUsername(Username);
+        List<Auction> auctions = auctionRepository.findByUser(user);
+        List<Map<String, Object>> response = new ArrayList<>();
+        if (user.isPresent()) {
+            for (Auction auction:auctions) {
+                Map<String, Object> auctionMap = new HashMap<>();
+                auctionMap.put("id", auction.getId_auction());
+                auctionMap.put("name", auction.getName());
+                auctionMap.put("initial_price", auction.getInitial_price());
+                auctionMap.put("start_dateTime", auction.getStart_dateTime());
+                auctionMap.put("end_dateTime", auction.getEnd_dateTime());
+                auctionMap.put("description", auction.getDescription());
+                auctionMap.put("id_annonce", auction.getAnnonce().getId_annonce());
+                response.add(auctionMap);
+            }}
+
+        return response;
+    }
+    public ResponseEntity<MessageResponse> deleteAuction(Long id_auction) {
+        Auction existentAuction = auctionRepository.findById(id_auction).orElse(null);
+
+        if (existentAuction == null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Not found"));
+        }
+
+        try {
+            auctionRepository.deleteById(id_auction);
+            return ResponseEntity.ok(new MessageResponse("Deleted successfully!"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Not deleted"));
+        }
+    }
+
         }
 
 
