@@ -9,6 +9,7 @@ import com.authentification.repositories.AnnonceRepository;
 import com.authentification.repositories.UserRepository;
 import com.authentification.service.AnnonceService;
 import com.authentification.service.AuctionService;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -45,6 +46,10 @@ public class AuctionController {
                                                      @RequestHeader(value = "Authorization") String token) {
         return auctionService.getAuctionPrice(token,id);
     }
+    @GetMapping("/{id_auction}/AuctionOwner")
+    public User getUserByAnnonceId(@PathVariable("id_auction") Long id_auction) throws NotFoundException {
+        return auctionService.getAuctionOwner(id_auction);
+    }
     @PostMapping("/addAuction")
     public ResponseEntity<MessageResponse> addAnnonce(
             @RequestBody Auction auction,
@@ -57,8 +62,13 @@ public class AuctionController {
                                                          @RequestHeader(value = "Authorization") String token) throws IOException {
         return auctionService.addAuctionToAnnonce(id, auction, token);
     }
+    @GetMapping("/{id_annonce}/checkExistentAuction")
+    public ResponseEntity<MessageResponse> checkExistentAuction(@PathVariable("id_annonce") Long id,
+                                                               @RequestHeader(value = "Authorization") String token) throws IOException {
+        return auctionService.checkExistentAuction(id, token);
+    }
     @PutMapping("/{id_auction}/updatePrice")
-    public ResponseEntity<MessageResponse> updateFirstName(@PathVariable("id_auction") Long id_auction,
+    public ResponseEntity<MessageResponse> updatePrice(@PathVariable("id_auction") Long id_auction,
                                                            @RequestParam("newPrice") String newPrice,
                                                            @RequestHeader(value = "Authorization") String token) throws IOException {
         return auctionService.updatePrice(token,id_auction, newPrice);

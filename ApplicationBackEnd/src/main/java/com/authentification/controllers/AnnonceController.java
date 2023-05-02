@@ -39,7 +39,7 @@ public class AnnonceController {
     public List<Annonce> getAnnonceByCategory(@PathVariable String category) {
         return annonceService.getAnnonceByCategory(category);
     }
-    @GetMapping("/{id_annonce}/user")
+    @GetMapping("/{id_annonce}/AnnonceOwner")
     public User getUserByAnnonceId(@PathVariable("id_annonce") Long id_annonce) throws NotFoundException {
             return annonceService.getAnnonceOwner(id_annonce);
     }
