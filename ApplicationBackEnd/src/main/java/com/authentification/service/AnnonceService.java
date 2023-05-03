@@ -193,6 +193,15 @@ public class AnnonceService {
 
         return response;
     }
+    public User getExchangeNotif(Long id_annonce) throws NotFoundException {
+        Optional<Annonce> annonceOptional = annonceRepository.findById(id_annonce);
+        if (annonceOptional.isPresent()) {
+            Annonce annonce = annonceOptional.get();
+            return annonce.getUser();
+        } else {
+            throw new NotFoundException("Annonce with id " + id_annonce + " not found.");
+        }
+    }
 
 }
 
