@@ -31,18 +31,42 @@ public class ExchangeService {
     private ExchangeRepository exchangeRepository;
 
     public List<Map<String, Object>> getUserExchanges(String username) {
-        List<Exchange> exchanges = exchangeRepository.findByUsername(username);
+        List<Exchange> exchanges = exchangeRepository.findByReceiver(username);
         List<Map<String, Object>> response = new ArrayList<>();
         for (Exchange exchange : exchanges) {
             Map<String, Object> exchangeMap = new HashMap<>();
-            exchangeMap.put("id_Exchange", exchange.getId_Exchange());
-            exchangeMap.put("username", exchange.getUsername());
-            exchangeMap.put("id_HisAnnonce", exchange.getId_HisAnnonce());
-            exchangeMap.put("id_AnnonceToExchange", exchange.getId_AnnonceToExchange());
+            exchangeMap.put("id", exchange.getId());
+            exchangeMap.put("receiver", exchange.getReceiver());
+            exchangeMap.put("id_receiver_annonce", exchange.getId_receiver_annonce());
+            exchangeMap.put("sender",exchange.getSender());
+            exchangeMap.put("id_sender_annonce", exchange.getId_sender_annonce());
             exchangeMap.put("status",exchange.getStatus());
             response.add(exchangeMap);
         }
         return response;
+    }
+    public List<Map<String, Object>> getSenderRequests(String username) {
+        List<Exchange> exchanges = exchangeRepository.findBySender(username);
+        List<Map<String, Object>> response = new ArrayList<>();
+        for (Exchange exchange : exchanges) {
+            Map<String, Object> exchangeMap = new HashMap<>();
+            exchangeMap.put("id", exchange.getId());
+            exchangeMap.put("receiver", exchange.getReceiver());
+            exchangeMap.put("id_receiver_annonce", exchange.getId_receiver_annonce());
+            exchangeMap.put("sender",exchange.getSender());
+            exchangeMap.put("id_sender_annonce", exchange.getId_sender_annonce());
+            exchangeMap.put("status",exchange.getStatus());
+            response.add(exchangeMap);
+        }
+        return response;
+    }
+    public Exchange getExchangeById(long id) throws NotFoundException {
+        Optional<Exchange> exchange = exchangeRepository.findById(id);
+        if (exchange.isPresent()) {
+            return exchange.get();
+        } else {
+            throw new NotFoundException("Exchange with id " + id + " not found.");
+        }
     }
 
     public ResponseEntity<MessageResponse> addExchangeOffer(Exchange exchange, String token) throws IOException {
@@ -50,13 +74,29 @@ public class ExchangeService {
         Optional<User> user = userRepository.findByUsername(username);
         if (user.isPresent()) {
             Exchange newExchange = new Exchange();
-            newExchange.setUsername(exchange.getUsername());
-            newExchange.setId_AnnonceToExchange(exchange.getId_AnnonceToExchange());
-            newExchange.setId_HisAnnonce(exchange.getId_HisAnnonce());
-            newExchange.setStatus(false);
+            newExchange.setSender(username);
+            newExchange.setId_sender_annonce(exchange.getId_sender_annonce());
+            newExchange.setId_receiver_annonce(exchange.getId_receiver_annonce());
+            newExchange.setStatus("waiting");
+            Optional<Annonce> annonceOptional = annonceRepository.findById(exchange.getId_receiver_annonce());
+            newExchange.setReceiver(annonceOptional.get().getUser().getUsername());
             exchangeRepository.save(newExchange);
             return ResponseEntity.ok(new MessageResponse("Exchange added successfully!"));
         }
         return ResponseEntity.badRequest().body(new MessageResponse("Failed to add exchange."));
+    }
+    public ResponseEntity<MessageResponse> updateStatus(String token,Long id_exchange, String newStatus) {
+        Exchange existentExchange = exchangeRepository.findById(id_exchange).orElse(null);
+        if (existentExchange == null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Exchange not found"));
+        }
+        String username = jwtUtils.getUserNameFromJwtToken(token);
+        Optional<User> user = userRepository.findByUsername(username);
+        if (user.isPresent()) {
+            existentExchange.setStatus(newStatus);
+            exchangeRepository.save(existentExchange);
+            return ResponseEntity.ok(new MessageResponse("this status is updated to " + newStatus));
+        }
+        return ResponseEntity.badRequest().body(new MessageResponse("Failed to update status"));
     }
 }

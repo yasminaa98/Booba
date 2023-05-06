@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -34,6 +35,12 @@ public class AnnonceController {
     @GetMapping("/getAll")
     public List<Map<String, Object>> getAllAnnonce() {
         return annonceService.getAllAnnonce();
+    }
+
+
+    @GetMapping("/{id_annonce}/getAnnonceById")
+    public Annonce getAnnonceById(@PathVariable("id_annonce") Long id_annonce) throws NotFoundException {
+        return annonceService.getAnnonceById(id_annonce);
     }
     @GetMapping("/{category}")
     public List<Annonce> getAnnonceByCategory(@PathVariable String category) {

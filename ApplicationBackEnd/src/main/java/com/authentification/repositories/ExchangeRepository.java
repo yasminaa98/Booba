@@ -11,5 +11,8 @@ import java.util.Optional;
 
 @Repository
 public interface ExchangeRepository  extends JpaRepository<Exchange,Long> {
-    List<Exchange> findByUsername(String username);
+    List<Exchange> findBySender(String sender);
+    List<Exchange> findByReceiver(String receiver);
+
+
 }

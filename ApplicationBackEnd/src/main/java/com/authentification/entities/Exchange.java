@@ -17,18 +17,21 @@ import java.util.List;
 public class Exchange {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_Exchange;
+    private Long id;
 
-    @Column(name = "username")
-    private String username;
+    @Column(name = "sender")
+    private String sender;
 
-    @Column(name="id_HisAnnonce")
-    private Long id_HisAnnonce ;
+    @Column(name = "receiver")
+    private String receiver;
 
-    @Column(name = "id_AnnonceToExchange")
-    private Long id_AnnonceToExchange;
+    @Column(name="id_receiver_annonce")
+    private Long id_receiver_annonce ;
+
+    @Column(name = "id_sender_annonce")
+    private Long id_sender_annonce;
 
     @Column(name = "status")
-    private Boolean status;
+    private String status;
 
 }
