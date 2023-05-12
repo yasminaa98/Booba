@@ -95,17 +95,18 @@ public class UserService {
                 signUpRequest.getEmail(),
                 signUpRequest.getFirstname(),
                 signUpRequest.getLastname(),
+                "",
                 signUpRequest.getHomeAddress(),
                 signUpRequest.getAvgResponseTime(),
                 signUpRequest.getPhone(),
                 signUpRequest.getDescription(),
                 encoder.encode(signUpRequest.getPassword()));
-        if (signUpRequest.getProfilePicture() != null) {
+       /* if (signUpRequest.getProfilePicture() != null) {
             String fileName = signUpRequest.getProfilePicture().getOriginalFilename();
             Path path = Paths.get("C:/ProfilePictures/" + fileName) ;
             Files.write(path, signUpRequest.getProfilePicture().getBytes());
             user.setProfilePicturePath(path.toString());
-        }
+        }*/
         userRepository.save(user);
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(signUpRequest.getUsername(), signUpRequest.getPassword()));

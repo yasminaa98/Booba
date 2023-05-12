@@ -64,6 +64,19 @@ public class AccountService {
             return ResponseEntity.badRequest().body(new MessageResponse("Failed to modify lastname"));
         }
     }
+    public ResponseEntity<MessageResponse> updatePicture(Long id_user, String newPicture) {
+        User existentUser = userRepository.findById(id_user).orElse(null);
+        if (existentUser == null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("User not found"));
+        }
+        existentUser.setProfilePicturePath(newPicture);
+        try {
+            userRepository.save(existentUser);
+            return ResponseEntity.ok(new MessageResponse("picture modified successfully!"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Failed to modify picture"));
+        }
+    }
 
     /***
      * Api for updating lastname

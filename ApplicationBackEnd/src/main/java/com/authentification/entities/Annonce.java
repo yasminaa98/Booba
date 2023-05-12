@@ -35,8 +35,6 @@ public class Annonce {
         @Column
         private String picturePath ;
 
-        @Transient
-        private MultipartFile picture ;
 
         @Column(name = "ageChild")
         private String ageChild;

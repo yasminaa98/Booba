@@ -71,7 +71,7 @@ public class User {
 
 
 	public User(String username,String email, String firstname,
-				String lastname, String homeAddress, String avgResponseTime, int phone,
+				String lastname,String profilePicturePath, String homeAddress, String avgResponseTime, int phone,
 				String description, String encode) {
 
 		this.username = username;
@@ -83,8 +83,8 @@ public class User {
 		this.phone = phone;
 		this.avgResponseTime = avgResponseTime;
 		this.description = description;
+		this.profilePicturePath=profilePicturePath;
 	}
 
-	public void setProfilePicturePath(String toString) {
-	}
+
 }

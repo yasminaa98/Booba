@@ -41,6 +41,11 @@ public class AccountController {
                                                            @RequestParam("newFirstName") String newFirstName) {
         return accountService.updateFirstName(id_user, newFirstName);
     }
+    @PutMapping("/{id_user}/update-picture")
+    public ResponseEntity<MessageResponse> updatePicture(@PathVariable("id_user") Long id_user,
+                                                           @RequestParam("newPicture") String newPicture) {
+        return accountService.updatePicture(id_user, newPicture);
+    }
 
     /***
      * Api for updating lastname

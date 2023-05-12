@@ -44,6 +44,7 @@ public class AnnonceService {
             annonceMap.put("ageToy", annonce.getAgeToy());
             annonceMap.put("category", annonce.getCategory());
             annonceMap.put("description", annonce.getDescription());
+            annonceMap.put("picture",annonce.getPicturePath());
             annonceMap.put("user_id", annonce.getUser().getId_user());
             response.add(annonceMap);
         }
@@ -109,15 +110,10 @@ public class AnnonceService {
             newAnnonce.setAgeToy(annonce.getAgeToy());
             newAnnonce.setCategory(annonce.getCategory());
             newAnnonce.setDescription(annonce.getDescription());
+            newAnnonce.setPicturePath(annonce.getPicturePath());
             newAnnonce.setEstArchive(false);
             newAnnonce.setUser(user.get());
 
-            if (annonce.getPicture() != null) {
-                String fileName = annonce.getPicture().getOriginalFilename();
-                Path path = Paths.get("C:/AnnoncePictures/" + fileName);
-                Files.write(path, annonce.getPicture().getBytes());
-                newAnnonce.setPicturePath(path.toString());
-            }
 
             annonceRepository.save(newAnnonce);
             return ResponseEntity.ok(new MessageResponse("Annonce added successfully!"));
@@ -142,6 +138,7 @@ public class AnnonceService {
                     updatedAnnonce.setAgeToy(annonce.getAgeToy());
                     updatedAnnonce.setCategory(annonce.getCategory());
                     updatedAnnonce.setDescription(annonce.getDescription());
+                    updatedAnnonce.setPicturePath(annonce.getPicturePath());
                     annonceRepository.save(updatedAnnonce);
                     return ResponseEntity.ok(new MessageResponse("Annonce modified successfully!"));
                 }
@@ -188,6 +185,7 @@ public class AnnonceService {
                 annonceMap.put("ageToy", annonce.getAgeToy());
                 annonceMap.put("category", annonce.getCategory());
                 annonceMap.put("description", annonce.getDescription());
+                annonceMap.put("picture",annonce.getPicturePath());
                 response.add(annonceMap);
             }}
         return response;
