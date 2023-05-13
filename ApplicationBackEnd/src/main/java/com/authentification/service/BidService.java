@@ -96,6 +96,7 @@ public class BidService {
             annonceMap.put("price_proposed", bid.getPrice_proposed());
             annonceMap.put("auction_id", bid.getAuction().getId_auction());
             annonceMap.put("username", bid.getUser().getUsername());
+            annonceMap.put("profilePicturePath", bid.getUser().getProfilePicturePath());
             response.add(annonceMap);
         }}
 
@@ -115,6 +116,7 @@ public class BidService {
             bidMap.put("note",bid.getNote());
             bidMap.put("price_proposed",bid.getPrice_proposed());
             bidMap.put("username",bid.getUser().getUsername());
+            bidMap.put("profilePicturePath",bid.getUser().getProfilePicturePath());
             bidMap.put("auction_id",bid.getAuction().getId_auction());
         }
         return bidMap;

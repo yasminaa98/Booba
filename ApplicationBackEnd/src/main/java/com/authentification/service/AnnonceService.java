@@ -4,6 +4,7 @@ import com.authentification.entities.*;
 import com.authentification.jwt.JwtUtils;
 import com.authentification.payload.MessageResponse;
 import com.authentification.repositories.AnnonceRepository;
+import com.authentification.repositories.AuctionRespository;
 import com.authentification.repositories.UserRepository;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,8 @@ public class AnnonceService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
+    private AuctionRespository auctionRespository;
+    @Autowired
     private JwtUtils jwtUtils ;
 
     public List<Map<String, Object>> getAllAnnonce() {
@@ -44,7 +47,7 @@ public class AnnonceService {
             annonceMap.put("ageToy", annonce.getAgeToy());
             annonceMap.put("category", annonce.getCategory());
             annonceMap.put("description", annonce.getDescription());
-            annonceMap.put("picture",annonce.getPicturePath());
+            annonceMap.put("picturePath",annonce.getPicturePath());
             annonceMap.put("user_id", annonce.getUser().getId_user());
             response.add(annonceMap);
         }
@@ -64,15 +67,7 @@ public class AnnonceService {
         return annonceRepository.findByCategory(category);
     }
 
-    public User getAnnonceOwner(Long id_annonce) throws NotFoundException {
-        Optional<Annonce> annonceOptional = annonceRepository.findById(id_annonce);
-        if (annonceOptional.isPresent()) {
-            Annonce annonce = annonceOptional.get();
-            return annonce.getUser();
-        } else {
-            throw new NotFoundException("Annonce with id " + id_annonce + " not found.");
-        }
-    }
+
 
     public List<Annonce> getAnnoncesForSale(String token) {
         String username = jwtUtils.getUserNameFromJwtToken(token);
@@ -185,10 +180,31 @@ public class AnnonceService {
                 annonceMap.put("ageToy", annonce.getAgeToy());
                 annonceMap.put("category", annonce.getCategory());
                 annonceMap.put("description", annonce.getDescription());
-                annonceMap.put("picture",annonce.getPicturePath());
+                annonceMap.put("picturePath",annonce.getPicturePath());
                 response.add(annonceMap);
             }}
         return response;
+    }
+    public User getAnnonceOwner(Long id_annonce) throws NotFoundException {
+        Optional<Annonce> annonceOptional = annonceRepository.findById(id_annonce);
+        if (annonceOptional.isPresent()) {
+            Annonce annonce = annonceOptional.get();
+            return annonce.getUser();
+        } else {
+            throw new NotFoundException("Annonce with id " + id_annonce + " not found.");
+        }
+    }
+    public Annonce getAnnonceByAuctionId(Long id_auction) throws NotFoundException {
+        Optional<Auction> auction=auctionRespository.findById(id_auction);
+        Optional<Annonce> annonce = annonceRepository.findByAuction(auction);
+        List<Map<String, Object>> response = new ArrayList<>();
+        if (auction.isPresent()) {
+            Auction auctions = auction.get();
+            return auction.get().getAnnonce();
+        }
+        else {
+            throw new NotFoundException("Auction with id " + id_auction + " not found.");
+        }
     }
 
 

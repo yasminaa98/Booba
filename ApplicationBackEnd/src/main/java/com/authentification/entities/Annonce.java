@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
-
 import javax.persistence.*;
 import java.util.List;
 
@@ -54,6 +52,9 @@ public class Annonce {
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "id_user")
         private User user;
+        @JsonIgnore
+        @OneToMany(mappedBy = "annonce", cascade = CascadeType.REMOVE)
+        private List<Auction> auction;
 
         @JsonIgnore
         @OneToMany(mappedBy = "annonce")

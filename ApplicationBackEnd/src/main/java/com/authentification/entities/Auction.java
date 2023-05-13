@@ -46,12 +46,11 @@ public class Auction {
     private User user;
 
     @JsonIgnore
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_annonce")
     private Annonce annonce;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "auction", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "auction", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Bid> Bids;
-
 }

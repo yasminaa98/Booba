@@ -36,7 +36,11 @@ public class AnnonceController {
     public List<Map<String, Object>> getAllAnnonce() {
         return annonceService.getAllAnnonce();
     }
+    @GetMapping("/{id_auction}/getAnnonceByAuctionId")
+    public Annonce getAnnonceByAuctionId(@PathVariable("id_auction") Long id_auction) throws NotFoundException {
 
+        return annonceService.getAnnonceByAuctionId(id_auction);
+    }
 
     @GetMapping("/{id_annonce}/getAnnonceById")
     public Annonce getAnnonceById(@PathVariable("id_annonce") Long id_annonce) throws NotFoundException {

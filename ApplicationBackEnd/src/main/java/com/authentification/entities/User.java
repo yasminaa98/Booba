@@ -68,8 +68,6 @@ public class User {
 	@OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
 	private List<Annonce> annonces;
 
-
-
 	public User(String username,String email, String firstname,
 				String lastname,String profilePicturePath, String homeAddress, String avgResponseTime, int phone,
 				String description, String encode) {
