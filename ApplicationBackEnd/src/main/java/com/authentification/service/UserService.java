@@ -113,10 +113,12 @@ public class UserService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
         String successMessage = "User " + signUpRequest.getUsername() + " registered successfully!";
-        String tokenMessage = "Signup token: " + jwt;
-        response.put("message", Arrays.asList(new MessageResponse(successMessage), new MessageResponse(tokenMessage)));
-        response.put("id", user.getId_user());
-        return response;
+        String id="id"+ user.getId_user();
+        Map<String, Object> newResponse = new HashMap<>();
+        newResponse.put("message", successMessage);
+        newResponse.put("token", jwt);
+        newResponse.put("id", user.getId_user());
+        return newResponse;
     }
 
     public void logoutUser(HttpServletRequest request) {
