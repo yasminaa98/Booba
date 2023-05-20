@@ -3,16 +3,17 @@ package com.authentification.service;
 import com.authentification.entities.*;
 import com.authentification.jwt.JwtUtils;
 import com.authentification.payload.MessageResponse;
-import com.authentification.repositories.AnnonceRepository;
-import com.authentification.repositories.AuctionRespository;
-import com.authentification.repositories.UserRepository;
+import com.authentification.repositories.*;
+import com.authentification.util.ImageUtils;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,6 +23,13 @@ import java.util.*;
 @Service
 @Transactional
 public class AnnonceService {
+    @Autowired
+    private StorageRepository repository;
+
+    @Autowired
+    private FileDataRepository fileDataRepository;
+
+    private final String FOLDER_PATH="C:/Users/Asus/IdeaProjects/booba/ApplicationBackEnd/src/main/resources/images/annonces/";
 
     @Autowired
     private AnnonceRepository annonceRepository ;
@@ -31,6 +39,51 @@ public class AnnonceService {
     private AuctionRespository auctionRespository;
     @Autowired
     private JwtUtils jwtUtils ;
+
+    //image download api
+
+    public String uploadImage(MultipartFile file) throws IOException {
+        ImageData imageData = repository.save(ImageData.builder()
+                .name(file.getOriginalFilename())
+                .type(file.getContentType())
+                .imageData(ImageUtils.compressImage(file.getBytes())).build());
+        if (imageData != null) {
+            return "file uploaded successfully : " + file.getOriginalFilename();
+        }
+        return null;
+    }
+
+
+
+    public byte[] downloadImage(String fileName) {
+        Optional<ImageData> dbImageData = repository.findByName(fileName);
+        byte[] images = ImageUtils.decompressImage(dbImageData.get().getImageData());
+        return images;
+    }
+
+
+    /*public String uploadImageToFileSystem(MultipartFile file) throws IOException {
+        String filePath=FOLDER_PATH+file.getOriginalFilename();
+
+        FileData fileData=fileDataRepository.save(FileData.builder()
+                .name(file.getOriginalFilename())
+                .type(file.getContentType())
+                .filePath(filePath).build());
+
+        file.transferTo(new File(filePath));
+
+        if (fileData != null) {
+            return "file uploaded successfully : " + filePath;
+        }
+        return null;
+    }*/
+
+    public byte[] downloadImageFromFileSystem(String fileName) throws IOException {
+        Optional<FileData> fileData = fileDataRepository.findByName(fileName);
+        String filePath=fileData.get().getFilePath();
+        byte[] images = Files.readAllBytes(new File(filePath).toPath());
+        return images;
+    }
 
     public List<Map<String, Object>> getAllAnnonce() {
         List<Annonce> annonces = annonceRepository.findAll();
@@ -47,7 +100,7 @@ public class AnnonceService {
             annonceMap.put("ageToy", annonce.getAgeToy());
             annonceMap.put("category", annonce.getCategory());
             annonceMap.put("description", annonce.getDescription());
-            annonceMap.put("picturePath",annonce.getPicturePath());
+            annonceMap.put("picture",annonce.getPicturePath());
             annonceMap.put("user_id", annonce.getUser().getId_user());
             annonceMap.put("estArchive", annonce.isEstArchive());
             response.add(annonceMap);
@@ -106,17 +159,20 @@ public class AnnonceService {
             newAnnonce.setAgeToy(annonce.getAgeToy());
             newAnnonce.setCategory(annonce.getCategory());
             newAnnonce.setDescription(annonce.getDescription());
-            newAnnonce.setPicturePath(annonce.getPicturePath());
             newAnnonce.setEstArchive(false);
             newAnnonce.setUser(user.get());
-
-
+            String filePath=FOLDER_PATH+annonce.getPicture().getOriginalFilename();
+            FileData fileData=fileDataRepository.save(FileData.builder()
+                    .name(annonce.getPicture().getOriginalFilename())
+                    .type(annonce.getPicture().getContentType())
+                    .filePath(filePath).build());
+            annonce.getPicture().transferTo(new File(filePath));
+            newAnnonce.setPicturePath(fileData.getName());
             annonceRepository.save(newAnnonce);
             return ResponseEntity.ok(new MessageResponse("Annonce added successfully!"));
         }
         return ResponseEntity.badRequest().body(new MessageResponse("Failed to add annonce."));
     }
-
     public ResponseEntity<MessageResponse> modifyAnnonce(Long id, Annonce annonce, String token) {
         String username = jwtUtils.getUserNameFromJwtToken(token);
         Optional<User> user = userRepository.findByUsername(username);
@@ -181,7 +237,7 @@ public class AnnonceService {
                 annonceMap.put("ageToy", annonce.getAgeToy());
                 annonceMap.put("category", annonce.getCategory());
                 annonceMap.put("description", annonce.getDescription());
-                annonceMap.put("picturePath",annonce.getPicturePath());
+                annonceMap.put("picture",annonce.getPicturePath());
                 annonceMap.put("estArchive", annonce.isEstArchive());
                 response.add(annonceMap);
             }}

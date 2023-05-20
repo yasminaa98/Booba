@@ -6,6 +6,9 @@ import com.authentification.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -41,10 +44,15 @@ public class AccountController {
                                                            @RequestParam("newFirstName") String newFirstName) {
         return accountService.updateFirstName(id_user, newFirstName);
     }
-    @PutMapping("/{id_user}/update-picture")
+ /*   @PutMapping("/{id_user}/update-picture")
     public ResponseEntity<MessageResponse> updatePicture(@PathVariable("id_user") Long id_user,
                                                            @RequestParam("newPicture") String newPicture) {
         return accountService.updatePicture(id_user, newPicture);
+    }*/
+    @PutMapping("/update-profile-picture")
+    public ResponseEntity<?> updateProfilePicture(@RequestHeader("Authorization") String token, @RequestParam("profilePicture") MultipartFile profilePicture) throws IOException, IOException {
+
+        return accountService.updateProfilePicture(token,profilePicture);
     }
 
     /***

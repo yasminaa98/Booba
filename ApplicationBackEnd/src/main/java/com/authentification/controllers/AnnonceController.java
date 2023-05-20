@@ -9,7 +9,10 @@ import com.authentification.repositories.UserRepository;
 import com.authentification.service.AnnonceService;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -41,6 +44,15 @@ public class AnnonceController {
 
         return annonceService.getAnnonceByAuctionId(id_auction);
     }
+    @GetMapping("classpath")
+    public ResponseEntity<byte[]> fromClasspathAsResEntity(@RequestParam("picture") String picture) throws IOException {
+
+        ClassPathResource imageFile = new ClassPathResource("images/profiles/"+picture);
+
+        byte[] imageBytes = StreamUtils.copyToByteArray(imageFile.getInputStream());
+
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imageBytes);
+    }
 
     @GetMapping("/{id_annonce}/getAnnonceById")
     public Annonce getAnnonceById(@PathVariable("id_annonce") Long id_annonce) throws NotFoundException {
@@ -67,8 +79,8 @@ public class AnnonceController {
     public List<Annonce> getAnnonceForExchange(@RequestHeader("Authorization") String token) {
        return annonceService.getAnnoncesForExchange(token);
     }
-    @PostMapping("/add")
-        public ResponseEntity<MessageResponse> addAnnonce(@RequestBody Annonce annonce,
+    @PostMapping(value="/add",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+        public ResponseEntity<MessageResponse> addAnnonce(@ModelAttribute Annonce annonce,
                                                           @RequestHeader(value = "Authorization") String token) throws IOException {
             return annonceService.addAnnonce(annonce, token);
     }

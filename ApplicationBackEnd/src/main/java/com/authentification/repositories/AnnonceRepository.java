@@ -17,6 +17,6 @@ public interface AnnonceRepository extends JpaRepository<Annonce,Long> {
 
     List<Annonce> findByUser(Optional<User> user);
     Optional<Annonce> findByAuction(Optional<Auction> auction);
-
+    Optional<Annonce> findByPicturePath(String picturePath);
 }
 

@@ -37,8 +37,8 @@ public class User {
 	@Column (name="lastname")
 	private String lastname ;
 
-	@Column(name = "profile_picture_path")
-	private String profilePicturePath;
+	@Column(name = "profilePicture")
+	private String profilePicture;
 
 	@Column (name="email")
 	private String email;
@@ -81,7 +81,7 @@ public class User {
 		this.phone = phone;
 		this.avgResponseTime = avgResponseTime;
 		this.description = description;
-		this.profilePicturePath=profilePicturePath;
+		this.profilePicture=profilePicture;
 	}
 
 

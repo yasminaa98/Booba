@@ -9,8 +9,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -19,8 +27,8 @@ public class AccountService {
 
     @Autowired
     private UserRepository userRepository;
-
-    JwtUtils jwtUtils ;
+@Autowired
+    private JwtUtils jwtUtils ;
 
     /***
      * Api for getting a user object by username
@@ -64,7 +72,7 @@ public class AccountService {
             return ResponseEntity.badRequest().body(new MessageResponse("Failed to modify lastname"));
         }
     }
-    public ResponseEntity<MessageResponse> updatePicture(Long id_user, String newPicture) {
+  /*  public ResponseEntity<MessageResponse> updatePicture(Long id_user, String newPicture) {
         User existentUser = userRepository.findById(id_user).orElse(null);
         if (existentUser == null) {
             return ResponseEntity.badRequest().body(new MessageResponse("User not found"));
@@ -76,7 +84,8 @@ public class AccountService {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new MessageResponse("Failed to modify picture"));
         }
-    }
+    } */
+
 
     /***
      * Api for updating lastname
@@ -267,6 +276,28 @@ public class AccountService {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new MessageResponse("Not deleted"));
         }
+    }
+    public ResponseEntity<Map<String, Object>> updateProfilePicture(String token,MultipartFile profilePicture) throws IOException, IOException {
+        Long id_user = jwtUtils.getUserIdFromToken(token);
+        Map<String, Object> response = new HashMap<>();
+        Optional<User> userOptional = userRepository.findById(id_user);
+        if (!userOptional.isPresent()) {
+            response.put("message", "Error: User not found!");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+        User user = userOptional.get();
+        String originalFilename = profilePicture.getOriginalFilename();
+        String fileName = originalFilename.split("\\.", 2)[0];
+        String fileExtension = originalFilename.split("\\.", 2)[1];
+        String modifiedDate = new Date().toString().replace(':', '.');
+        byte[] bytes = profilePicture.getBytes();
+        Path path = Paths.get("C:/Users/Asus/IdeaProjects/booba/ApplicationBackEnd/src/main/resources/images/profiles/" + fileName + modifiedDate + "." + fileExtension);
+        Files.write(path, bytes);
+        user.setProfilePicture(fileName + modifiedDate + "." + fileExtension);
+        userRepository.save(user);
+        response.put("message", "Profile picture updated successfully!");
+        response.put("profilePicture", user.getProfilePicture());
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 }

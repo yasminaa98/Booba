@@ -67,9 +67,10 @@ import com.authentification.service.UserDetailsImpl;
 			return false;
 		}
 
-		public Long getUserIdFromToken(String token) {
-			Claims claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
-			return Long.parseLong(claims.getSubject());
-		}
+	public Long getUserIdFromToken(String token) {
+
+		Claims claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
+		return  Long.valueOf((Integer) claims.get("id"));
+	}
 
 	}
