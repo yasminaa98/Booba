@@ -28,12 +28,6 @@ public class Auction {
     @Column(name = "description")
     private String description;
 
-    @Column
-    private String picturePath ;
-
-    @Transient
-    private MultipartFile picture ;
-
     @Column(name = "start_dateTime")
     private String start_dateTime;
 

@@ -1,8 +1,10 @@
 package com.authentification.service;
 
+import com.authentification.entities.FileData;
 import com.authentification.entities.User;
 import com.authentification.jwt.JwtUtils;
 import com.authentification.payload.MessageResponse;
+import com.authentification.repositories.FileDataRepository;
 import com.authentification.repositories.UserRepository;
 import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,8 +30,11 @@ public class AccountService {
 
     @Autowired
     private UserRepository userRepository;
-@Autowired
+    @Autowired
     private JwtUtils jwtUtils ;
+    @Autowired
+    private FileDataRepository fileDataRepository;
+    private final String FOLDER_PATH="C:/Users/Asus/IdeaProjects/booba/ApplicationBackEnd/src/main/resources/images/profiles/";
 
     /***
      * Api for getting a user object by username
@@ -286,6 +292,16 @@ public class AccountService {
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
         User user = userOptional.get();
+        String filePath=FOLDER_PATH+profilePicture.getOriginalFilename();
+        FileData fileData=fileDataRepository.save(FileData.builder()
+                .name(profilePicture.getOriginalFilename())
+                .type(profilePicture.getContentType())
+                .filePath(filePath).build());
+        profilePicture.transferTo(new File(filePath));
+        user.setProfilePicture(fileData.getName());
+        userRepository.save(user);
+
+       /* User user = userOptional.get();
         String originalFilename = profilePicture.getOriginalFilename();
         String fileName = originalFilename.split("\\.", 2)[0];
         String fileExtension = originalFilename.split("\\.", 2)[1];
@@ -294,7 +310,7 @@ public class AccountService {
         Path path = Paths.get("C:/Users/Asus/IdeaProjects/booba/ApplicationBackEnd/src/main/resources/images/profiles/" + fileName + modifiedDate + "." + fileExtension);
         Files.write(path, bytes);
         user.setProfilePicture(fileName + modifiedDate + "." + fileExtension);
-        userRepository.save(user);
+        userRepository.save(user);*/
         response.put("message", "Profile picture updated successfully!");
         response.put("profilePicture", user.getProfilePicture());
         return new ResponseEntity<>(response, HttpStatus.OK);

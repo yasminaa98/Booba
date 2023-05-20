@@ -41,7 +41,6 @@ public class AnnonceController {
     }
     @GetMapping("/{id_auction}/getAnnonceByAuctionId")
     public Annonce getAnnonceByAuctionId(@PathVariable("id_auction") Long id_auction) throws NotFoundException {
-
         return annonceService.getAnnonceByAuctionId(id_auction);
     }
     @GetMapping("classpath")

@@ -64,14 +64,6 @@ public class AuctionService {
             newAuction.setEnd_dateTime(auction.getEnd_dateTime());
             newAuction.setDescription(auction.getDescription());
             newAuction.setUser(user.get());
-
-            if (auction.getPicture() != null) {
-                String fileName = auction.getPicture().getOriginalFilename();
-                Path path = Paths.get("C:/AnnoncePictures/" + fileName);
-                Files.write(path, auction.getPicture().getBytes());
-                newAuction.setPicturePath(path.toString());
-            }
-
             auctionRepository.save(newAuction);
             return ResponseEntity.ok(new MessageResponse("Auction added successfully!"));
         }
@@ -122,12 +114,6 @@ public class AuctionService {
                 newAuction.setDescription(auction.getDescription());
                 newAuction.setUser(user.get());
                 newAuction.setAnnonce(annonceToAuction.get());
-                if (auction.getPicture() != null) {
-                    String fileName = auction.getPicture().getOriginalFilename();
-                    Path path = Paths.get("C:/AnnoncePictures/" + fileName);
-                    Files.write(path, auction.getPicture().getBytes());
-                    newAuction.setPicturePath(path.toString());
-                }
                 auctionRepository.save(newAuction);
                 return ResponseEntity.ok(new MessageResponse("Auction added successfully!"));
             }

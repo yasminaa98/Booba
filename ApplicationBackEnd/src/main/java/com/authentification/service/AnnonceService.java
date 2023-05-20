@@ -237,7 +237,7 @@ public class AnnonceService {
                 annonceMap.put("ageToy", annonce.getAgeToy());
                 annonceMap.put("category", annonce.getCategory());
                 annonceMap.put("description", annonce.getDescription());
-                annonceMap.put("picture",annonce.getPicturePath());
+                annonceMap.put("picturePath",annonce.getPicturePath());
                 annonceMap.put("estArchive", annonce.isEstArchive());
                 response.add(annonceMap);
             }}
