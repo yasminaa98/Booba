@@ -17,8 +17,7 @@ public class SignupRequest {
     private String firstname;
     @NotBlank
     private String lastname ;
-    @NotBlank
-    private MultipartFile profilePicture ;
+
     @NotBlank
     private String email;
     @NotBlank
@@ -30,7 +29,5 @@ public class SignupRequest {
     @NotBlank
     private String description;
 
-    public MultipartFile getProfilePicture() { return profilePicture ;}
-    public void setProfilePicture(MultipartFile profilePicture) {this.profilePicture = profilePicture ;}
 
 }
